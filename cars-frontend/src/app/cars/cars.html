@@ -1,174 +1,286 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
-  <!-- Header & Action Bar -->
-  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
-    <div>
-      <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">Cars Inventory & Showroom</h1>
-      <p class="mt-1 text-sm text-slate-500">Explore vehicles, photos, specifications, and manufacturer brands</p>
-    </div>
-    <div class="flex items-center gap-3">
-      <!-- View Mode Toggle -->
-      <div class="inline-flex rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
-        <button (click)="viewMode = 'table'"
-                [ngClass]="viewMode === 'table' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 hover:text-slate-900'"
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-          </svg>
-          Table
-        </button>
-        <button (click)="viewMode = 'grid'"
-                [ngClass]="viewMode === 'grid' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 hover:text-slate-900'"
-                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-          </svg>
-          Showroom
-        </button>
-      </div>
+  <!-- Toast Notification -->
+  <div *ngIf="toastMessage" 
+       class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-lg border backdrop-blur-md transition-all duration-300 transform translate-y-0"
+       [ngClass]="toastType === 'success' ? 'bg-emerald-900/90 text-white border-emerald-700/60' : 'bg-rose-900/90 text-white border-rose-700/60'">
+    <svg *ngIf="toastType === 'success'" class="w-5 h-5 text-emerald-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+    </svg>
+    <svg *ngIf="toastType === 'error'" class="w-5 h-5 text-rose-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span class="text-sm font-medium">{{ toastMessage }}</span>
+  </div>
 
-      <a routerLink="/add-car"
-         class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 focus:ring-4 focus:ring-blue-100">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        <span>Add New Car</span>
-      </a>
+  <!-- Header & KPI Metric Cards -->
+  <div class="mb-8">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Vehicle Inventory & Showroom</h1>
+        <p class="mt-1 text-sm text-slate-500">Explore specifications, pricing, and manufacturer relations</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a routerLink="/add-car"
+           class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl shadow-sm hover:shadow transition-all duration-150 focus:ring-4 focus:ring-slate-300">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          <span>Add New Car</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Fleet</div>
+        <div class="mt-1 text-2xl font-bold text-slate-900">{{ cars.length }} <span class="text-xs font-normal text-slate-400">cars</span></div>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Average Price</div>
+        <div class="mt-1 text-2xl font-bold text-emerald-600">{{ averagePrice | currency:'EUR':'symbol':'1.0-0' }}</div>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Manufacturers</div>
+        <div class="mt-1 text-2xl font-bold text-blue-600">{{ brands.length }} <span class="text-xs font-normal text-slate-400">brands</span></div>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-slate-200/80 shadow-xs">
+        <div class="text-xs font-semibold uppercase tracking-wider text-slate-400">Filtered Results</div>
+        <div class="mt-1 text-2xl font-bold text-slate-900">{{ filteredCars.length }} <span class="text-xs font-normal text-slate-400">visible</span></div>
+      </div>
     </div>
   </div>
 
-  <!-- Search & Filters Card -->
-  <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 mb-6">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+  <!-- Filter, Search & View Controls -->
+  <div class="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs mb-8">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
       <!-- Search Input -->
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Search by Model</label>
-        <div class="relative">
-          <input type="text"
-                 [(ngModel)]="searchKeyword"
-                 (input)="onSearch()"
-                 placeholder="e.g. M4, RS6, GT3..."
-                 class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
-          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      <div class="flex-1 min-w-[240px] relative">
+        <input type="text"
+               [(ngModel)]="searchKeyword"
+               (input)="onSearch()"
+               placeholder="Search by model, plate, or brand..."
+               class="w-full pl-10 pr-9 py-2.5 border border-slate-200 rounded-xl text-sm bg-slate-50/50 focus:bg-white focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100 transition-all" />
+        <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <button *ngIf="searchKeyword" (click)="clearSearch()" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
-        </div>
+        </button>
       </div>
 
-      <!-- Brand Filter Dropdown -->
-      <div>
-        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Filter by Brand</label>
+      <!-- Controls Row: Brand Filter, Sort, View Toggle -->
+      <div class="flex flex-wrap sm:flex-nowrap items-center gap-3">
+        <!-- Brand Dropdown -->
         <select [(ngModel)]="selectedBrandId"
                 (change)="onBrandFilterChange()"
-                class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
-          <option [ngValue]="0">All Brands (Show All)</option>
+                class="px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-800 focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100">
+          <option [ngValue]="0">All Brands</option>
           <option *ngFor="let b of brands" [ngValue]="b.idBrand">
             {{ b.name }} ({{ b.country }})
           </option>
         </select>
+
+        <!-- Sort Dropdown -->
+        <select [(ngModel)]="sortBy"
+                (change)="onSortChange()"
+                class="px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-800 focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100">
+          <option value="name-asc">Sort: Model (A - Z)</option>
+          <option value="price-asc">Sort: Price (Low → High)</option>
+          <option value="price-desc">Sort: Price (High → Low)</option>
+          <option value="date-desc">Sort: Newest First</option>
+        </select>
+
+        <!-- View Mode Switcher -->
+        <div class="inline-flex rounded-xl border border-slate-200 bg-slate-100/80 p-1 shrink-0">
+          <button (click)="viewMode = 'grid'"
+                  [ngClass]="viewMode === 'grid' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'"
+                  title="Grid View"
+                  class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">
+            <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+          </button>
+          <button (click)="viewMode = 'table'"
+                  [ngClass]="viewMode === 'table' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-500 hover:text-slate-800'"
+                  title="Table View"
+                  class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all">
+            <svg class="w-4 h-4 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <!-- Quick Stats -->
-      <div class="flex items-center justify-between sm:justify-end gap-6 sm:col-span-2 lg:col-span-1 pt-2 sm:pt-4">
-        <div class="text-right">
-          <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Total Cars</span>
-          <span class="text-2xl font-bold text-slate-800">{{ cars.length }}</span>
-        </div>
-        <div class="text-right">
-          <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Brands</span>
-          <span class="text-2xl font-bold text-blue-600">{{ brands.length }}</span>
+    </div>
+  </div>
+
+  <!-- SKELETON LOADING STATE -->
+  <div *ngIf="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let item of [1,2,3,4,5,6]" class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden animate-pulse">
+      <div class="h-48 bg-slate-200"></div>
+      <div class="p-5 space-y-3">
+        <div class="h-5 bg-slate-200 rounded w-2/3"></div>
+        <div class="h-4 bg-slate-100 rounded w-1/3"></div>
+        <div class="pt-4 border-t border-slate-100 flex justify-between">
+          <div class="h-8 bg-slate-200 rounded w-20"></div>
+          <div class="h-8 bg-slate-200 rounded w-20"></div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- SHOWROOM GRID VIEW -->
+  <div *ngIf="!isLoading && viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let c of filteredCars" 
+         class="group bg-white rounded-2xl border border-slate-200/80 overflow-hidden hover:border-slate-300 hover:shadow-md transition-all duration-200 flex flex-col">
+      
+      <!-- Photo Container -->
+      <div class="relative h-48 w-full bg-slate-100 overflow-hidden cursor-pointer" (click)="openQuickView(c)">
+        <img [src]="c.imagePath || fallbackImage"
+             (error)="onImageError($event)"
+             alt="{{ c.model }}"
+             class="w-full h-full object-cover group-hover:scale-103 transition-transform duration-300" />
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+          <span class="text-xs text-white font-medium flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            Click for specifications
+          </span>
+        </div>
+        <div class="absolute top-3 left-3">
+          <span *ngIf="c.brand" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white/95 text-slate-800 shadow-xs border border-slate-100">
+            {{ c.brand.name }}
+          </span>
+        </div>
+        <div class="absolute top-3 right-3">
+          <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-slate-900/80 text-white font-medium">
+            {{ c.licensePlate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="p-5 flex-1 flex flex-col justify-between">
+        <div>
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <h3 class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{{ c.model }}</h3>
+              <p class="text-xs text-slate-500 mt-0.5">
+                <span *ngIf="c.brand">{{ c.brand.country }} • </span>Built: {{ c.releaseDate | date:'MMMM yyyy' }}
+              </p>
+            </div>
+            <div class="text-right">
+              <span class="text-lg font-extrabold text-slate-900 block">
+                {{ c.price | currency:'EUR':'symbol':'1.0-0' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions Bar -->
+        <div class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+          <button (click)="openQuickView(c)"
+                  class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
+            Quick View
+          </button>
+          <div class="flex items-center gap-1.5">
+            <a [routerLink]="['/update-car', c.idCar]"
+               class="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+              Edit
+            </a>
+            <button (click)="confirmDelete(c)"
+                    class="px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- TABLE VIEW -->
-  <div *ngIf="viewMode === 'table'" class="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden">
+  <div *ngIf="!isLoading && viewMode === 'table'" class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-xs">
     <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-slate-200">
-        <thead class="bg-slate-50">
+      <table class="min-w-full divide-y divide-slate-100">
+        <thead class="bg-slate-50/75">
           <tr>
-            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Photo</th>
-            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">ID</th>
-            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Model</th>
-            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Brand</th>
-            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Price</th>
-            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Release Date</th>
-            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Plate</th>
-            <th scope="col" class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+            <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Vehicle</th>
+            <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Manufacturer</th>
+            <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Price</th>
+            <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Release Date</th>
+            <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Plate</th>
+            <th scope="col" class="px-5 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 bg-white">
-          <tr *ngFor="let c of cars" class="hover:bg-slate-50/70 transition-colors">
-            <!-- Photo Thumbnail -->
-            <td class="px-6 py-3 whitespace-nowrap">
-              <img [src]="c.imagePath || fallbackImage"
-                   (error)="onImageError($event)"
-                   alt="{{ c.model }}"
-                   class="w-14 h-10 object-cover rounded-lg shadow-xs border border-slate-200" />
-            </td>
-
-            <!-- ID -->
-            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-400">
-              #{{ c.idCar }}
-            </td>
-
-            <!-- Model -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-bold text-slate-900">{{ c.model }}</div>
-            </td>
-
-            <!-- Brand -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span *ngIf="c.brand" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
-                <span>{{ c.brand.name }}</span>
-                <span class="text-blue-400">({{ c.brand.country }})</span>
-              </span>
-              <span *ngIf="!c.brand" class="text-xs text-slate-400 italic">No Brand</span>
-            </td>
-
-            <!-- Price -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-sm font-semibold text-emerald-600">
-                {{ c.price | currency:'EUR':'symbol':'1.0-2' }}
+          <tr *ngFor="let c of filteredCars" class="hover:bg-slate-50/60 transition-colors">
+            <!-- Vehicle Info & Thumbnail -->
+            <td class="px-5 py-3.5 whitespace-nowrap">
+              <div class="flex items-center gap-3">
+                <img [src]="c.imagePath || fallbackImage"
+                     (error)="onImageError($event)"
+                     alt="{{ c.model }}"
+                     class="w-12 h-9 object-cover rounded-lg border border-slate-200/80 cursor-pointer"
+                     (click)="openQuickView(c)" />
+                <div>
+                  <div class="text-sm font-bold text-slate-900 cursor-pointer hover:text-blue-600" (click)="openQuickView(c)">
+                    {{ c.model }}
+                  </div>
+                  <div class="text-xs text-slate-400 font-mono">ID #{{ c.idCar }}</div>
+                </div>
               </div>
             </td>
 
+            <!-- Brand -->
+            <td class="px-5 py-3.5 whitespace-nowrap">
+              <span *ngIf="c.brand" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+                <span>{{ c.brand.name }}</span>
+                <span class="text-slate-400 text-[10px]">({{ c.brand.country }})</span>
+              </span>
+              <span *ngIf="!c.brand" class="text-xs text-slate-400 italic">None</span>
+            </td>
+
+            <!-- Price -->
+            <td class="px-5 py-3.5 whitespace-nowrap">
+              <span class="text-sm font-semibold text-slate-900">
+                {{ c.price | currency:'EUR':'symbol':'1.0-0' }}
+              </span>
+            </td>
+
             <!-- Release Date -->
-            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+            <td class="px-5 py-3.5 whitespace-nowrap text-sm text-slate-500">
               {{ c.releaseDate | date:'dd/MM/yyyy' }}
             </td>
 
             <!-- License Plate -->
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span class="inline-block px-2.5 py-1 text-xs font-mono font-medium bg-slate-100 text-slate-700 rounded border border-slate-300">
+            <td class="px-5 py-3.5 whitespace-nowrap">
+              <span class="inline-block px-2 py-0.5 text-xs font-mono font-medium bg-slate-100 text-slate-700 rounded border border-slate-200">
                 {{ c.licensePlate }}
               </span>
             </td>
 
             <!-- Actions -->
-            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+            <td class="px-5 py-3.5 whitespace-nowrap text-right space-x-2">
+              <button (click)="openQuickView(c)"
+                      class="px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
+                View
+              </button>
               <a [routerLink]="['/update-car', c.idCar]"
-                 class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors border border-amber-200">
-                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
+                 class="px-2.5 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                 Edit
               </a>
-              <button (click)="deleteCar(c)"
-                      class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors border border-rose-200">
-                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
+              <button (click)="confirmDelete(c)"
+                      class="px-2.5 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
                 Delete
               </button>
-            </td>
-          </tr>
-
-          <!-- Empty Row -->
-          <tr *ngIf="cars.length === 0">
-            <td colspan="8" class="px-6 py-12 text-center text-slate-400">
-              <p class="text-base font-semibold text-slate-700">No cars found</p>
             </td>
           </tr>
         </tbody>
@@ -176,56 +288,112 @@
     </div>
   </div>
 
-  <!-- SHOWROOM GRID CARDS VIEW -->
-  <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let c of cars" class="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col">
-      <!-- Car Image -->
-      <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
-        <img [src]="c.imagePath || fallbackImage"
-             (error)="onImageError($event)"
-             alt="{{ c.model }}"
-             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-        <div class="absolute top-3 left-3">
-          <span *ngIf="c.brand" class="px-3 py-1 rounded-full text-xs font-bold bg-white/90 backdrop-blur-xs text-blue-700 shadow-sm border border-white/60">
-            {{ c.brand.name }}
-          </span>
-        </div>
-        <div class="absolute top-3 right-3">
-          <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-black/60 backdrop-blur-xs text-white">
-            {{ c.licensePlate }}
-          </span>
-        </div>
-      </div>
-
-      <!-- Car Details -->
-      <div class="p-5 flex-1 flex flex-col justify-between">
-        <div>
-          <div class="flex items-start justify-between gap-2">
-            <h3 class="text-lg font-bold text-slate-900 leading-snug">{{ c.model }}</h3>
-            <span class="text-base font-extrabold text-emerald-600 whitespace-nowrap">
-              {{ c.price | currency:'EUR':'symbol':'1.0-0' }}
-            </span>
-          </div>
-          <p class="text-xs text-slate-500 mt-1">Release: {{ c.releaseDate | date:'MMM yyyy' }} • Ref #{{ c.idCar }}</p>
-        </div>
-
-        <!-- Card Actions -->
-        <div class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
-          <a [routerLink]="['/update-car', c.idCar]"
-             class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
-            Edit Details
-          </a>
-          <button (click)="deleteCar(c)"
-                  class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
-            Delete
-          </button>
-        </div>
-      </div>
+  <!-- EMPTY STATE -->
+  <div *ngIf="!isLoading && filteredCars.length === 0" 
+       class="bg-white rounded-2xl border border-slate-200/80 p-12 text-center my-6">
+    <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+      </svg>
     </div>
+    <h3 class="text-base font-semibold text-slate-800">No cars found</h3>
+    <p class="text-sm text-slate-500 mt-1 max-w-sm mx-auto">No vehicles match your active search or brand filter. Try clearing the filters.</p>
+    <button (click)="clearSearch()" 
+            class="mt-4 px-4 py-2 text-xs font-medium text-blue-600 hover:text-blue-700 hover:underline">
+      Clear all filters
+    </button>
+  </div>
 
-    <!-- Empty Grid -->
-    <div *ngIf="cars.length === 0" class="col-span-full py-16 text-center text-slate-400">
-      <p class="text-base font-semibold text-slate-700">No cars found matching criteria.</p>
+  <!-- QUICK VIEW SPECIFICATIONS MODAL -->
+  <div *ngIf="selectedCarForModal" 
+       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Image Cover -->
+      <div class="relative h-64 w-full bg-slate-100">
+        <img [src]="selectedCarForModal.imagePath || fallbackImage"
+             (error)="onImageError($event)"
+             alt="{{ selectedCarForModal.model }}"
+             class="w-full h-full object-cover" />
+        <button (click)="closeQuickView()"
+                class="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors">
+          ✕
+        </button>
+        <div class="absolute bottom-4 left-4">
+          <span *ngIf="selectedCarForModal.brand" class="px-3 py-1 rounded-md text-xs font-bold bg-white text-slate-900 shadow">
+            {{ selectedCarForModal.brand.name }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900">{{ selectedCarForModal.model }}</h2>
+            <p class="text-xs text-slate-400 font-mono mt-0.5">Registration Ref: {{ selectedCarForModal.licensePlate }}</p>
+          </div>
+          <div class="text-2xl font-extrabold text-emerald-600">
+            {{ selectedCarForModal.price | currency:'EUR':'symbol':'1.0-0' }}
+          </div>
+        </div>
+
+        <!-- Specifications Grid -->
+        <div class="grid grid-cols-2 gap-4 my-6 p-4 rounded-xl bg-slate-50 border border-slate-100 text-sm">
+          <div>
+            <span class="block text-xs text-slate-400 uppercase font-semibold">Origin</span>
+            <span class="font-medium text-slate-700">{{ selectedCarForModal.brand ? selectedCarForModal.brand.country : 'N/A' }}</span>
+          </div>
+          <div>
+            <span class="block text-xs text-slate-400 uppercase font-semibold">Release Date</span>
+            <span class="font-medium text-slate-700">{{ selectedCarForModal.releaseDate | date:'fullDate' }}</span>
+          </div>
+          <div class="col-span-2" *ngIf="selectedCarForModal.brand?.description">
+            <span class="block text-xs text-slate-400 uppercase font-semibold">Brand Overview</span>
+            <span class="text-xs text-slate-600">{{ selectedCarForModal.brand.description }}</span>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <button (click)="closeQuickView()"
+                  class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+            Close
+          </button>
+          <a [routerLink]="['/update-car', selectedCarForModal.idCar]"
+             (click)="closeQuickView()"
+             class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors">
+            Edit Vehicle
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DELETE CONFIRMATION DIALOG -->
+  <div *ngIf="carToDelete" 
+       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+      <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+      </div>
+      <h3 class="text-lg font-bold text-slate-900">Remove Vehicle from Fleet?</h3>
+      <p class="text-sm text-slate-500 mt-2">
+        Are you sure you want to permanently delete <strong class="text-slate-800">{{ carToDelete.model }}</strong> (Plate: {{ carToDelete.licensePlate }})? This action cannot be undone.
+      </p>
+      <div class="mt-6 flex items-center justify-end gap-3">
+        <button (click)="cancelDelete()"
+                class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
+          Cancel
+        </button>
+        <button (click)="executeDelete()"
+                class="px-4 py-2 text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 rounded-xl shadow-xs transition-colors">
+          Yes, Delete
+        </button>
+      </div>
     </div>
   </div>
 
