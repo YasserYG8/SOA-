@@ -5,7 +5,7 @@ services:
     restart: always
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_DATABASE: cars_db
+      MYSQL_DATABASE: mydatabase
     ports:
       - "3306:3306"
     volumes:

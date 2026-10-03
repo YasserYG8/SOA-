@@ -15,7 +15,7 @@ Ce projet a été développé dans le cadre du cours **"Développez Full Stack a
 | **Variables métier dédiées** | `cars` (et non `prods`), `brands` (et non `cats`) |
 | **Nom du projet Spring Boot** | `cars_proj` |
 | **Style UI** | Tailwind CSS avec design moderne, responsive et élégant |
-| **Base de Données** | MySQL 8.4 conteneurisé avec Docker Compose (`cars_db`) |
+| **Base de Données** | MySQL 8.4 conteneurisé avec Docker Compose (`mydatabase`) |
 
 ---
 
@@ -94,7 +94,7 @@ Dans le dossier racine `SOA` :
 ```bash
 docker compose up -d
 ```
-- **MySQL** : `localhost:3306` (Base : `cars_db`, Utilisateur : `root`, sans mot de passe)
+- **MySQL** : `localhost:3306` (Base : `mydatabase`, Utilisateur : `root`, sans mot de passe)
 - **phpMyAdmin** : `http://localhost:8080`
 
 ### Étape 2 : Démarrer le Backend Spring Boot
