@@ -1,0 +1,23 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Backend (Maven & Java)
+cars_proj/target/
+cars_proj/.mvn/timing.properties
+cars_proj/.mvn/wrapper/maven-wrapper.jar
+
+# Frontend (Angular & Node)
+cars-frontend/node_modules/
+cars-frontend/dist/
+cars-frontend/.angular/
+cars-frontend/npm-debug.log*
+cars-frontend/yarn-debug.log*
+cars-frontend/yarn-error.log*
+
+# IDE & Editors
+.idea/
+.vscode/
+*.iml
+*.class
+*.log

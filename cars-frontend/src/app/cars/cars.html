@@ -1,0 +1,154 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+  <!-- Header & Action Bar -->
+  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">Cars Inventory</h1>
+      <p class="mt-1 text-sm text-slate-500">Manage your fleet, brand affiliations, and pricing specifications</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <a routerLink="/add-car"
+         class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 focus:ring-4 focus:ring-blue-100">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>Add New Car</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Search & Filters Card -->
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 p-5 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- Search Input -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Search by Model</label>
+        <div class="relative">
+          <input type="text"
+                 [(ngModel)]="searchKeyword"
+                 (input)="onSearch()"
+                 placeholder="e.g. M4, RS6, GT3..."
+                 class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Brand Filter Dropdown -->
+      <div>
+        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Filter by Brand</label>
+        <select [(ngModel)]="selectedBrandId"
+                (change)="onBrandFilterChange()"
+                class="w-full px-3.5 py-2 border border-slate-300 rounded-lg text-sm text-slate-800 bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100">
+          <option [ngValue]="0">All Brands (Show All)</option>
+          <option *ngFor="let b of brands" [ngValue]="b.idBrand">
+            {{ b.name }} ({{ b.country }})
+          </option>
+        </select>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="flex items-center justify-between sm:justify-end gap-6 sm:col-span-2 lg:col-span-1 pt-2 sm:pt-4">
+        <div class="text-right">
+          <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Total Cars</span>
+          <span class="text-2xl font-bold text-slate-800">{{ cars.length }}</span>
+        </div>
+        <div class="text-right">
+          <span class="block text-xs font-semibold uppercase tracking-wider text-slate-400">Brands</span>
+          <span class="text-2xl font-bold text-blue-600">{{ brands.length }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cars Table -->
+  <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200">
+        <thead class="bg-slate-50">
+          <tr>
+            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">ID</th>
+            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Model</th>
+            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Brand</th>
+            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Price</th>
+            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Release Date</th>
+            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">License Plate</th>
+            <th scope="col" class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 bg-white">
+          <tr *ngFor="let c of cars" class="hover:bg-slate-50/70 transition-colors">
+            <!-- ID -->
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-400">
+              #{{ c.idCar }}
+            </td>
+
+            <!-- Model -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-bold text-slate-900">{{ c.model }}</div>
+            </td>
+
+            <!-- Brand -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span *ngIf="c.brand" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+                <span>{{ c.brand.name }}</span>
+                <span class="text-blue-400">({{ c.brand.country }})</span>
+              </span>
+              <span *ngIf="!c.brand" class="text-xs text-slate-400 italic">No Brand</span>
+            </td>
+
+            <!-- Price -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-semibold text-emerald-600">
+                {{ c.price | currency:'EUR':'symbol':'1.0-2' }}
+              </div>
+            </td>
+
+            <!-- Release Date -->
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+              {{ c.releaseDate | date:'dd/MM/yyyy' }}
+            </td>
+
+            <!-- License Plate -->
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span class="inline-block px-2.5 py-1 text-xs font-mono font-medium bg-slate-100 text-slate-700 rounded border border-slate-300">
+                {{ c.licensePlate }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+              <a [routerLink]="['/update-car', c.idCar]"
+                 class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors border border-amber-200">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Edit
+              </a>
+              <button (click)="deleteCar(c)"
+                      class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors border border-rose-200">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Delete
+              </button>
+            </td>
+          </tr>
+
+          <!-- Empty Row -->
+          <tr *ngIf="cars.length === 0">
+            <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+              <svg class="mx-auto h-12 w-12 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+              </svg>
+              <p class="text-base font-semibold text-slate-700">No cars found</p>
+              <p class="text-sm text-slate-500 mt-1">Try adjusting your search criteria or add a new car.</p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
