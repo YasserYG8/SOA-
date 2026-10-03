@@ -94,7 +94,7 @@ Dans le dossier racine `SOA` :
 ```bash
 docker compose up -d
 ```
-- **MySQL** : `localhost:3306` (Base : `mydatabase`, Utilisateur : `root`, sans mot de passe)
+- **MySQL** : `localhost:3306` (Base : `cars_db`, Utilisateur : `root`, sans mot de passe)
 - **phpMyAdmin** : `http://localhost:8080`
 
 ### Étape 2 : Démarrer le Backend Spring Boot
