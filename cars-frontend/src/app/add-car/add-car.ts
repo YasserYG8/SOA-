@@ -19,6 +19,7 @@ export class AddCarComponent implements OnInit {
   brands: Brand[] = [];
   newIdBrand!: number;
   message: string = '';
+  fallbackImage: string = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80';
 
   constructor(private carService: CarService, private router: Router) {}
 
@@ -36,6 +37,10 @@ export class AddCarComponent implements OnInit {
 
   addCar(): void {
     this.newCar.brand = this.brands.find(b => b.idBrand == this.newIdBrand)!;
+    if (!this.newCar.imagePath || this.newCar.imagePath.trim() === '') {
+      this.newCar.imagePath = this.fallbackImage;
+    }
+
     this.carService.addCar(this.newCar).subscribe({
       next: (car) => {
         this.message = `Car "${car.model}" added successfully!`;
@@ -45,5 +50,9 @@ export class AddCarComponent implements OnInit {
       },
       error: (err) => console.error('Error adding car', err)
     });
+  }
+
+  onImageError(event: any): void {
+    event.target.src = this.fallbackImage;
   }
 }

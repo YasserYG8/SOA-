@@ -1,4 +1,4 @@
--- Schema definition for cars_db
+-- Schema definition for cars_db / mydatabase
 CREATE TABLE IF NOT EXISTS brand (
     id_brand BIGINT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS car (
     price DOUBLE NOT NULL,
     release_date DATE,
     license_plate VARCHAR(255),
+    image_path VARCHAR(500),
     brand_id_brand BIGINT,
     CONSTRAINT fk_car_brand FOREIGN KEY (brand_id_brand) REFERENCES brand(id_brand) ON DELETE CASCADE
 ) ENGINE=InnoDB;

@@ -25,12 +25,23 @@ public class Car {
     private Date releaseDate;
 
     private String licensePlate;
+    private String imagePath;
 
     @ManyToOne
     private Brand brand;
 
     public Car() {
         super();
+    }
+
+    public Car(String model, Double price, Date releaseDate, String licensePlate, String imagePath, Brand brand) {
+        super();
+        this.model = model;
+        this.price = price;
+        this.releaseDate = releaseDate;
+        this.licensePlate = licensePlate;
+        this.imagePath = imagePath;
+        this.brand = brand;
     }
 
     public Car(String model, Double price, Date releaseDate, String licensePlate, Brand brand) {
@@ -42,13 +53,14 @@ public class Car {
         this.brand = brand;
     }
 
-    public Car(Long idCar, String model, Double price, Date releaseDate, String licensePlate, Brand brand) {
+    public Car(Long idCar, String model, Double price, Date releaseDate, String licensePlate, String imagePath, Brand brand) {
         super();
         this.idCar = idCar;
         this.model = model;
         this.price = price;
         this.releaseDate = releaseDate;
         this.licensePlate = licensePlate;
+        this.imagePath = imagePath;
         this.brand = brand;
     }
 
@@ -92,6 +104,14 @@ public class Car {
         this.licensePlate = licensePlate;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
     public Brand getBrand() {
         return brand;
     }
@@ -103,6 +123,6 @@ public class Car {
     @Override
     public String toString() {
         return "Car [idCar=" + idCar + ", model=" + model + ", price=" + price + ", releaseDate=" + releaseDate
-                + ", licensePlate=" + licensePlate + ", brand=" + (brand != null ? brand.getName() : null) + "]";
+                + ", licensePlate=" + licensePlate + ", imagePath=" + imagePath + ", brand=" + (brand != null ? brand.getName() : null) + "]";
     }
 }

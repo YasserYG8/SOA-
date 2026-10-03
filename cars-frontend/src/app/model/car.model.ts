@@ -6,5 +6,6 @@ export class Car {
   price!: number;
   releaseDate!: Date;
   licensePlate!: string;
+  imagePath!: string;
   brand!: Brand;
 }

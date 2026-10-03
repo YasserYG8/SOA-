@@ -19,6 +19,7 @@ export class UpdateCarComponent implements OnInit {
   brands: Brand[] = [];
   updatedBrandId!: number;
   message: string = '';
+  fallbackImage: string = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80';
 
   constructor(
     private carService: CarService,
@@ -51,6 +52,10 @@ export class UpdateCarComponent implements OnInit {
     if (this.updatedBrandId) {
       this.currentCar.brand = this.brands.find(b => b.idBrand == this.updatedBrandId)!;
     }
+    if (!this.currentCar.imagePath || this.currentCar.imagePath.trim() === '') {
+      this.currentCar.imagePath = this.fallbackImage;
+    }
+
     this.carService.updateCar(this.currentCar).subscribe({
       next: (car) => {
         this.message = `Car #${car.idCar} updated successfully!`;
@@ -60,5 +65,9 @@ export class UpdateCarComponent implements OnInit {
       },
       error: (err) => console.error('Error updating car', err)
     });
+  }
+
+  onImageError(event: any): void {
+    event.target.src = this.fallbackImage;
   }
 }

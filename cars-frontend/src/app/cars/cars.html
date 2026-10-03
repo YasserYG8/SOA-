@@ -3,10 +3,30 @@
   <!-- Header & Action Bar -->
   <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
     <div>
-      <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">Cars Inventory</h1>
-      <p class="mt-1 text-sm text-slate-500">Manage your fleet, brand affiliations, and pricing specifications</p>
+      <h1 class="text-3xl font-extrabold tracking-tight text-slate-900">Cars Inventory & Showroom</h1>
+      <p class="mt-1 text-sm text-slate-500">Explore vehicles, photos, specifications, and manufacturer brands</p>
     </div>
     <div class="flex items-center gap-3">
+      <!-- View Mode Toggle -->
+      <div class="inline-flex rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
+        <button (click)="viewMode = 'table'"
+                [ngClass]="viewMode === 'table' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 hover:text-slate-900'"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+          </svg>
+          Table
+        </button>
+        <button (click)="viewMode = 'grid'"
+                [ngClass]="viewMode === 'grid' ? 'bg-blue-600 text-white shadow' : 'text-slate-600 hover:text-slate-900'"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+          </svg>
+          Showroom
+        </button>
+      </div>
+
       <a routerLink="/add-car"
          class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm hover:shadow transition-all duration-200 focus:ring-4 focus:ring-blue-100">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -62,23 +82,32 @@
     </div>
   </div>
 
-  <!-- Cars Table -->
-  <div class="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden">
+  <!-- TABLE VIEW -->
+  <div *ngIf="viewMode === 'table'" class="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden">
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-slate-200">
         <thead class="bg-slate-50">
           <tr>
+            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Photo</th>
             <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">ID</th>
             <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Model</th>
             <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Brand</th>
             <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Price</th>
             <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Release Date</th>
-            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">License Plate</th>
+            <th scope="col" class="px-6 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Plate</th>
             <th scope="col" class="px-6 py-3.5 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">Actions</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 bg-white">
           <tr *ngFor="let c of cars" class="hover:bg-slate-50/70 transition-colors">
+            <!-- Photo Thumbnail -->
+            <td class="px-6 py-3 whitespace-nowrap">
+              <img [src]="c.imagePath || fallbackImage"
+                   (error)="onImageError($event)"
+                   alt="{{ c.model }}"
+                   class="w-14 h-10 object-cover rounded-lg shadow-xs border border-slate-200" />
+            </td>
+
             <!-- ID -->
             <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-slate-400">
               #{{ c.idCar }}
@@ -91,7 +120,7 @@
 
             <!-- Brand -->
             <td class="px-6 py-4 whitespace-nowrap">
-              <span *ngIf="c.brand" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+              <span *ngIf="c.brand" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
                 <span>{{ c.brand.name }}</span>
                 <span class="text-blue-400">({{ c.brand.country }})</span>
               </span>
@@ -138,16 +167,65 @@
 
           <!-- Empty Row -->
           <tr *ngIf="cars.length === 0">
-            <td colspan="7" class="px-6 py-12 text-center text-slate-400">
-              <svg class="mx-auto h-12 w-12 text-slate-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-              </svg>
+            <td colspan="8" class="px-6 py-12 text-center text-slate-400">
               <p class="text-base font-semibold text-slate-700">No cars found</p>
-              <p class="text-sm text-slate-500 mt-1">Try adjusting your search criteria or add a new car.</p>
             </td>
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- SHOWROOM GRID CARDS VIEW -->
+  <div *ngIf="viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let c of cars" class="bg-white rounded-xl shadow-sm border border-slate-200/80 overflow-hidden hover:shadow-md transition-shadow duration-200 flex flex-col">
+      <!-- Car Image -->
+      <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
+        <img [src]="c.imagePath || fallbackImage"
+             (error)="onImageError($event)"
+             alt="{{ c.model }}"
+             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        <div class="absolute top-3 left-3">
+          <span *ngIf="c.brand" class="px-3 py-1 rounded-full text-xs font-bold bg-white/90 backdrop-blur-xs text-blue-700 shadow-sm border border-white/60">
+            {{ c.brand.name }}
+          </span>
+        </div>
+        <div class="absolute top-3 right-3">
+          <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-black/60 backdrop-blur-xs text-white">
+            {{ c.licensePlate }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Car Details -->
+      <div class="p-5 flex-1 flex flex-col justify-between">
+        <div>
+          <div class="flex items-start justify-between gap-2">
+            <h3 class="text-lg font-bold text-slate-900 leading-snug">{{ c.model }}</h3>
+            <span class="text-base font-extrabold text-emerald-600 whitespace-nowrap">
+              {{ c.price | currency:'EUR':'symbol':'1.0-0' }}
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">Release: {{ c.releaseDate | date:'MMM yyyy' }} • Ref #{{ c.idCar }}</p>
+        </div>
+
+        <!-- Card Actions -->
+        <div class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
+          <a [routerLink]="['/update-car', c.idCar]"
+             class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+            Edit Details
+          </a>
+          <button (click)="deleteCar(c)"
+                  class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty Grid -->
+    <div *ngIf="cars.length === 0" class="col-span-full py-16 text-center text-slate-400">
+      <p class="text-base font-semibold text-slate-700">No cars found matching criteria.</p>
     </div>
   </div>
 

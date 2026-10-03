@@ -4,7 +4,7 @@
   <div class="mb-6 flex items-center justify-between">
     <div>
       <h1 class="text-2xl font-bold tracking-tight text-slate-900">Add New Car</h1>
-      <p class="text-sm text-slate-500 mt-1">Fill in the technical details and associate a manufacturer brand.</p>
+      <p class="text-sm text-slate-500 mt-1">Fill in the technical details, photo URL, and associate a manufacturer brand.</p>
     </div>
     <a routerLink="/cars" class="inline-flex items-center text-sm font-medium text-slate-600 hover:text-slate-900">
       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -79,9 +79,6 @@
                  placeholder="e.g. 85000"
                  class="w-full px-4 py-2.5 border rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-100"
                  [ngClass]="priceRef.invalid && priceRef.touched ? 'border-rose-300 focus:border-rose-500' : 'border-slate-300 focus:border-blue-500'" />
-          <p *ngIf="priceRef.invalid && priceRef.touched" class="mt-1 text-xs text-rose-500">
-            Valid price is required.
-          </p>
         </div>
 
       </div>
@@ -102,9 +99,6 @@
                  #dateRef="ngModel"
                  class="w-full px-4 py-2.5 border rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-100"
                  [ngClass]="dateRef.invalid && dateRef.touched ? 'border-rose-300 focus:border-rose-500' : 'border-slate-300 focus:border-blue-500'" />
-          <p *ngIf="dateRef.invalid && dateRef.touched" class="mt-1 text-xs text-rose-500">
-            Release date is required.
-          </p>
         </div>
 
         <!-- License Plate -->
@@ -119,13 +113,35 @@
                  required
                  #plateRef="ngModel"
                  placeholder="e.g. 240-TUN-8888"
-                 class="w-full px-4 py-2.5 border rounded-lg text-sm transition-colors uppercase font-mono focus:outline-none focus:ring-2 focus:ring-blue-100"
+                 class="w-full px-4 py-2.5 border rounded-lg text-sm uppercase font-mono transition-colors focus:outline-none focus:ring-2 focus:ring-blue-100"
                  [ngClass]="plateRef.invalid && plateRef.touched ? 'border-rose-300 focus:border-rose-500' : 'border-slate-300 focus:border-blue-500'" />
-          <p *ngIf="plateRef.invalid && plateRef.touched" class="mt-1 text-xs text-rose-500">
-            License plate is required.
-          </p>
         </div>
 
+      </div>
+
+      <!-- Image URL & Live Preview -->
+      <div class="space-y-3">
+        <label for="imagePath" class="block text-sm font-semibold text-slate-700">
+          Car Photo URL
+        </label>
+        <div class="flex flex-col sm:flex-row gap-4 items-start">
+          <div class="flex-1 w-full">
+            <input type="text"
+                   id="imagePath"
+                   name="imagePath"
+                   [(ngModel)]="newCar.imagePath"
+                   placeholder="https://images.unsplash.com/... or any web image link"
+                   class="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-sm transition-colors focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100" />
+            <p class="mt-1 text-xs text-slate-400">Leave blank to use the default high-performance sports car photo.</p>
+          </div>
+          <!-- Live Preview Box -->
+          <div class="w-full sm:w-36 h-24 rounded-lg border border-slate-200 bg-slate-50 overflow-hidden flex items-center justify-center shrink-0">
+            <img [src]="newCar.imagePath || fallbackImage"
+                 (error)="onImageError($event)"
+                 alt="Preview"
+                 class="w-full h-full object-cover" />
+          </div>
+        </div>
       </div>
 
       <!-- Action Buttons -->

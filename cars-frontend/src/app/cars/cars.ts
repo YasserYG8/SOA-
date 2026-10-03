@@ -19,6 +19,9 @@ export class CarsComponent implements OnInit {
   brands: Brand[] = [];
   selectedBrandId: number = 0;
   searchKeyword: string = '';
+  viewMode: 'table' | 'grid' = 'table';
+
+  fallbackImage: string = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80';
 
   constructor(private carService: CarService) {}
 
@@ -46,7 +49,7 @@ export class CarsComponent implements OnInit {
   }
 
   deleteCar(c: Car): void {
-    const conf = confirm(`Are you sure you want to delete the car "${c.model}"?`);
+    const conf = confirm(`Are you sure you want to delete "${c.model}"?`);
     if (conf) {
       this.carService.deleteCar(c.idCar).subscribe({
         next: () => {
@@ -81,5 +84,9 @@ export class CarsComponent implements OnInit {
         error: (err) => console.error('Error searching cars', err)
       });
     }
+  }
+
+  onImageError(event: any): void {
+    event.target.src = this.fallbackImage;
   }
 }
