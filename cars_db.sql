@@ -1,10 +1,10 @@
 -- =====================================================================
 -- Full Database Migration Script for CarHub (Spring Boot 3 + Angular)
--- Database: mydatabase
+-- Database: cars_db
 -- =====================================================================
 
-CREATE DATABASE IF NOT EXISTS `mydatabase` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `mydatabase`;
+CREATE DATABASE IF NOT EXISTS `cars_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `cars_db`;
 
 -- 1. Drop existing tables if they exist
 DROP TABLE IF EXISTS `car`;
