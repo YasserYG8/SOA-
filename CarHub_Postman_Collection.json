@@ -7,6 +7,115 @@
   },
   "item": [
     {
+      "name": "Login (run this first)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.collectionVariables.set('token', pm.response.headers.get('Authorization'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8081/login",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "login"
+          ]
+        },
+        "description": "Saves the token for every other request. Use yasser / yasser123 to test the USER role."
+      },
+      "response": []
+    },
+    {
+      "name": "Register",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"driver1\",\n  \"email\": \"driver1@example.com\",\n  \"password\": \"secret123\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8081/register",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "register"
+          ]
+        },
+        "description": "Creates a disabled account and sends a 6-digit code."
+      },
+      "response": []
+    },
+    {
+      "name": "Verify Email",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8081/verifyEmail/123456",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8081",
+          "path": [
+            "verifyEmail",
+            "123456"
+          ]
+        },
+        "description": "Replace 123456 with the code you received."
+      },
+      "response": []
+    },
+    {
       "name": "1. Get All Cars (/api/all)",
       "request": {
         "method": "GET",
@@ -14,9 +123,14 @@
         "url": {
           "raw": "http://localhost:8082/api/all",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8082",
-          "path": ["api", "all"]
+          "path": [
+            "api",
+            "all"
+          ]
         },
         "description": "Fetch all cars for the showroom fleet"
       },
@@ -30,9 +144,14 @@
         "url": {
           "raw": "http://localhost:8082/api/1",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8082",
-          "path": ["api", "1"]
+          "path": [
+            "api",
+            "1"
+          ]
         },
         "description": "Retrieve car with ID 1 (M4 Competition)"
       },
@@ -46,9 +165,14 @@
         "url": {
           "raw": "http://localhost:8082/api/brands",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8082",
-          "path": ["api", "brands"]
+          "path": [
+            "api",
+            "brands"
+          ]
         },
         "description": "Retrieve all manufacturers"
       },
@@ -62,9 +186,15 @@
         "url": {
           "raw": "http://localhost:8082/api/brands/1",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8082",
-          "path": ["api", "brands", "1"]
+          "path": [
+            "api",
+            "brands",
+            "1"
+          ]
         },
         "description": "Retrieve BMW brand details"
       },
@@ -78,9 +208,15 @@
         "url": {
           "raw": "http://localhost:8082/api/carsbrand/1",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8082",
-          "path": ["api", "carsbrand", "1"]
+          "path": [
+            "api",
+            "carsbrand",
+            "1"
+          ]
         },
         "description": "Retrieve all cars manufactured by BMW (ID 1)"
       },
@@ -94,9 +230,15 @@
         "url": {
           "raw": "http://localhost:8082/api/carsbymodel/M4",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8082",
-          "path": ["api", "carsbymodel", "M4"]
+          "path": [
+            "api",
+            "carsbymodel",
+            "M4"
+          ]
         },
         "description": "Search for cars with 'M4' in model name"
       },
@@ -123,7 +265,7 @@
           },
           "COPY_PASTE_JSON_BODY": {
             "model": "Roma Spider",
-            "price": 245000.0,
+            "price": 245000,
             "releaseDate": "2024-05-10",
             "licensePlate": "249-TUN-8888",
             "imagePath": "https://images.unsplash.com/photo-1592198084033-aade902d1aae",
@@ -135,9 +277,13 @@
         "url": {
           "raw": "http://localhost:8082/api",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8082",
-          "path": ["api"]
+          "path": [
+            "api"
+          ]
         },
         "description": "Add a new Ferrari Roma Spider"
       },
@@ -165,7 +311,7 @@
           "COPY_PASTE_JSON_BODY": {
             "idCar": 1,
             "model": "M4 Competition xDrive",
-            "price": 94500.0,
+            "price": 94500,
             "releaseDate": "2023-04-12",
             "licensePlate": "235-TUN-4040",
             "imagePath": "https://images.unsplash.com/photo-1617814076367-b759c7d7e738",
@@ -177,9 +323,13 @@
         "url": {
           "raw": "http://localhost:8082/api",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8082",
-          "path": ["api"]
+          "path": [
+            "api"
+          ]
         },
         "description": "Update Car ID 1"
       },
@@ -193,13 +343,34 @@
         "url": {
           "raw": "http://localhost:8082/api/8",
           "protocol": "http",
-          "host": ["localhost"],
+          "host": [
+            "localhost"
+          ],
           "port": "8082",
-          "path": ["api", "8"]
+          "path": [
+            "api",
+            "8"
+          ]
         },
         "description": "Delete Car with ID 8"
       },
       "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "token",
+      "value": ""
     }
   ]
 }

@@ -1,8 +1,35 @@
 # 🚀 CarHub REST API Testing Cheat Sheet
 
-> **Base URL:** `http://localhost:8082`  
-> **Headers:** `Content-Type: application/json`  
-> **Backend Port:** `8082` | **Database:** `cars_db` (MySQL 8.4)
+> **Cars API:** `http://localhost:8082` (database `cars_db`)
+> **Users service:** `http://localhost:8081` (database `users_db`)
+> **Headers:** `Content-Type: application/json` and `Authorization: Bearer <token>`
+
+## 🔐 Get a token first
+
+Every Cars API call needs a token. Send this request, then copy the `Authorization` response header:
+
+```bash
+curl -i -X POST http://localhost:8081/login -H "Content-Type: application/json" -d "{\"username\":\"admin\",\"password\":\"admin123\"}"
+```
+
+| Account | Password | Roles |
+|:-------:|:--------:|:-----:|
+| `admin` | `admin123` | ADMIN, USER: can read and write |
+| `yasser` | `yasser123` | USER: can only read |
+
+| Situation | Status |
+|:---------:|:------:|
+| No token, invalid token or expired token | `401` |
+| Valid token, but USER tries to POST, PUT or DELETE | `403` |
+
+In Postman, the collection saves the token for you: run **Login** first.
+
+## 📝 Register a new account
+
+1. `POST http://localhost:8081/register` with `{"username":"driver1","email":"driver1@example.com","password":"secret123"}`
+2. Find the 6-digit code in your email. Without `MAIL_USERNAME` set, it is in the `users_proj` console.
+3. `GET http://localhost:8081/verifyEmail/{code}`
+4. Log in with the new account.
 
 ---
 

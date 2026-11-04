@@ -4,22 +4,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-CarHub is a course mini-project: a car showroom CRUD app with a Spring Boot 3.3 / Java 21 backend (`cars_proj/`), an Angular 20 / Tailwind 3 frontend (`cars-frontend/`), and MySQL 8.4 in Docker. The two apps are independent builds; there is no root build.
+CarHub is a course mini-project: a car showroom secured with JWT. It has three independent builds and no root build:
+
+| Folder | What it is | Port | Database |
+| --- | --- | --- | --- |
+| `cars_proj/` | Spring Boot 3.3 / Java 21 API for cars and brands | 8082 | `cars_db` |
+| `users_proj/` | Spring Boot 3.3 / Java 21 service for login and registration | 8081 | `users_db` |
+| `cars-frontend/` | Angular 20 / Tailwind 3 app | 4200 | none |
+
+Both databases live in the same Docker MySQL 8.4 and are created on first start. phpMyAdmin takes port 8080.
 
 ## Commands
 
-Start the database first. The backend and its tests both need it.
+Start the database first. Both backends and their tests need it.
 
 ```bash
 docker compose up -d        # from the repo root: MySQL on 3306, phpMyAdmin on http://localhost:8080
 ```
 
-Backend, from `cars_proj/` (use `./mvnw` on Linux/Mac):
+Each backend, from its own folder (`sh mvnw` on Linux/Mac, since `mvnw` is not marked executable):
 
 ```bash
-.\mvnw.cmd spring-boot:run                                        # API on http://localhost:8082
+.\mvnw.cmd spring-boot:run
 .\mvnw.cmd test                                                   # all tests
-.\mvnw.cmd test -Dtest=CarsProjApplicationTests#testFindByModel   # a single test
+.\mvnw.cmd test -Dtest=SecurityRulesTests#userCannotWrite         # a single test (cars_proj)
 ```
 
 Frontend, from `cars-frontend/`:
@@ -32,19 +40,29 @@ npm test        # ng test (Karma/Jasmine), but no *.spec.ts files exist yet
 
 No linter is configured. Prettier settings live in `cars-frontend/package.json`.
 
-To exercise the API by hand, use `CarHub_Postman_Collection.json` or `API_TESTING_SHEET.md`.
+To exercise the APIs by hand, use `CarHub_Postman_Collection.json` (run its Login request first) or `API_TESTING_SHEET.md`. Demo accounts: `admin` / `admin123` (ADMIN, USER) and `yasser` / `yasser123` (USER).
 
 ## Architecture
 
-**Backend** follows `restcontrollers` → `service` → `repos` → `entities` under `com.example.cars`. A single controller, `CarRESTController`, serves both cars and brands under `/api` with `@CrossOrigin("*")`. Entities use handwritten getters and setters even though Lombok is a dependency.
+**Authentication flow:** `users_proj` creates tokens and `cars_proj` only checks them. `POST /login` is handled by `JWTAuthenticationFilter`, which returns the token, without a `Bearer ` prefix, in the `Authorization` response header. Angular stores it in `localStorage`, and `token.interceptor.ts` adds `Bearer <token>` to every request except `/login`, `/register` and `/verifyEmail`. Each backend's `JWTAuthorizationFilter` verifies the token. Both read the key from `SecParams.SECRET`, which comes from `JWT_SECRET` with a shared development fallback, so **the two services must use the same value**. `SecParams` and the filter are deliberately duplicated in each project.
 
-**Frontend** uses standalone components (`cars`, `add-car`, `update-car`) routed in `app.routes.ts`. All HTTP goes through `services/car.service.ts`, which hardcodes `http://localhost:8082/api`; there is no proxy or environment file. Component files have no `.component` suffix (`cars/cars.ts` exports `CarsComponent`).
+**Security rules:** `cars_proj/.../security/SecurityConfig.java` holds the URL rules: GET needs ADMIN or USER, and writes need ADMIN. `@PreAuthorize` on the controller's write methods repeats the check. A new endpoint falls through to `anyRequest().authenticated()`, so any logged-in user can reach it until a rule is added. An invalid token leaves the caller anonymous rather than raising an error, so public routes keep working with a stale token and protected routes answer 401. CORS allows only `http://localhost:4200` and is configured in `SecurityConfig`, not with `@CrossOrigin`.
 
-The showroom's filtering, search and sorting run client-side in `CarsComponent.applyFiltersAndSorting()` over the full list from `/api/all`. The service's `filterCarsByBrand` and `searchCarsByModel` methods and their backend endpoints are not called by any component.
+**Backends** follow `restcontrollers` → `service` → `repos` → `entities`. Entities use handwritten getters and setters. Lombok is a dependency of `cars_proj` only and is unused.
 
-**API contract:** `Brand.cars` is `@JsonIgnore`d, so a `Car` serializes with its nested brand and a `Brand` never lists its cars. POST and PUT bodies reference a brand by nested object: `"brand": { "idBrand": 5 }`. Missing records return `200` with an empty body rather than `404`, because the service uses `findById(...).orElse(null)`.
+**Brands have two APIs in `cars_proj`:** the controller's `/api/brands` returns plain JSON, and Spring Data REST's `/brand` returns HAL. Angular uses `/brand`, so lists arrive as `b._embedded.brands` (`BrandWrapper`). `RestConfig` exposes `idBrand`, which Spring Data REST hides by default. `spring.data.rest.detection-strategy=annotated` keeps `CarRepository` unpublished; removing it would create a `/cars` endpoint.
 
-## Database initialization
+**Frontend** uses standalone components routed in `app.routes.ts`, with `authGuard` (logged in) and `carGuard` (ADMIN). URLs come from `src/environments/`. Component files have no `.component` suffix (`cars/cars.ts` exports `CarsComponent`). The fleet page filters and sorts client-side in `CarsComponent.applyFiltersAndSorting()`; the search pages demonstrate the server, keyup and pipe techniques.
+
+**API contract:** `Brand.cars` is `@JsonIgnore`d, so a `Car` serializes with its nested brand and a `Brand` never lists its cars. POST and PUT bodies reference a brand by nested object: `"brand": { "idBrand": 5 }`. Missing records return `200` with an empty body rather than `404`, because the service uses `findById(...).orElse(null)`. `users_proj` errors are JSON: `{ errorCode, message }`.
+
+## Registration
+
+`POST /register` saves the user with `enabled = false` and a 6-digit `VerificationToken` valid for 15 minutes, then emails the code. `GET /verifyEmail/{code}` enables the account. Registering again with the username or email of an unverified account replaces it, which is how a user gets a new code. A failed email send rolls the registration back.
+
+While `MAIL_USERNAME` is unset, `EmailService` prints the code in the `users_proj` console instead of sending it.
+
+## Database initialization (`cars_proj`)
 
 Several mechanisms overlap, and the order matters. With `spring.jpa.defer-datasource-initialization=true`, each startup runs:
 
@@ -60,14 +78,16 @@ Consequences:
 - `cars_db.sql` at the repo root is a manual script that **drops and recreates** both tables. Nothing runs it automatically.
 - A schema change must be made in the entity, `schema.sql` and `cars_db.sql` to stay consistent.
 
+`users_proj` relies on Hibernate `ddl-auto=update` alone and seeds its roles and demo accounts in `UsersProjApplication`.
+
 ## Tests
 
-`CarsProjApplicationTests` is a `@SpringBootTest` that runs against the real `cars_db` database, with no test profile or in-memory database. The tests print results rather than asserting, so a pass only shows the queries executed. They also change data: each run of `testCreateCar` adds another Ferrari brand and `296 GTB` car, and `testUpdateCar` raises the first car's price.
+All tests are `@SpringBootTest` against the real MySQL databases, with no test profile or in-memory database. To keep your data clean, point them at a throwaway database by setting `SPRING_DATASOURCE_URL`.
+
+- `cars_proj/SecurityRulesTests` and `users_proj/RegistrationTests` assert behaviour and roll back with `@Transactional`.
+- `users_proj/UsersProjApplicationTests` asserts login and role rules, and only reads.
+- `cars_proj/CarsProjApplicationTests` prints results rather than asserting, so a pass only shows the queries executed. It also changes data: each run of `testCreateCar` adds another Ferrari brand and `296 GTB` car, and `testUpdateCar` raises the first car's price.
 
 ## Conventions
 
-The course brief requires domain-specific names that differ from the course's own: `idCar`, `model`, `price`, `releaseDate`, `licensePlate` (not `nomProduit`, `prixProduit`, `dateCreation`), and `cars`/`brands` for variables (not `prods`/`cats`). The UI must stay on Tailwind CSS.
-
-## Stale documentation
-
-The database is `cars_db`, as set in `application.properties` and `docker-compose.yml`. Mentions of `mydatabase`, including in `README.md`'s spec table, predate a rename. The README's endpoint table also omits `GET /api/brands/{id}`.
+The course brief requires domain-specific names that differ from the course's own: `idCar`, `model`, `price`, `releaseDate`, `licensePlate` (not `nomProduit`, `prixProduit`, `dateCreation`), and `cars`/`brands` for variables (not `prods`/`cats`). The UI must stay on Tailwind CSS, not Bootstrap.

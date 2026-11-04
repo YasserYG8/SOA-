@@ -1,7 +1,7 @@
-# CarHub — Mini Projet Fullstack (Sprint 01)
-### Architecture : Spring Boot 3 + Angular 20 + Tailwind CSS + MySQL Docker
+# CarHub — Mini Projet Fullstack
+### Architecture : Spring Boot 3 + Angular 20 + Tailwind CSS + MySQL Docker + JWT
 
-Ce projet a été développé dans le cadre du cours **"Développez Full Stack avec Spring Boot 3 et Angular" (Sections 2, 3 et 4)**.
+Ce projet a été développé dans le cadre du cours **"Développez Full Stack avec Spring Boot 3 et Angular" (Sections 2 à 23)**.
 
 ---
 
@@ -15,7 +15,7 @@ Ce projet a été développé dans le cadre du cours **"Développez Full Stack a
 | **Variables métier dédiées** | `cars` (et non `prods`), `brands` (et non `cats`) |
 | **Nom du projet Spring Boot** | `cars_proj` |
 | **Style UI** | Tailwind CSS avec design moderne, responsive et élégant |
-| **Base de Données** | MySQL 8.4 conteneurisé avec Docker Compose (`mydatabase`) |
+| **Base de Données** | MySQL 8.4 conteneurisé avec Docker Compose (`cars_db` et `users_db`) |
 
 ---
 
@@ -46,44 +46,63 @@ erDiagram
 
 ```text
 SOA/
-├── docker-compose.yml          # Déploiement MySQL 8.4 + phpMyAdmin
-├── .gitignore                  # Exclusion node_modules, target, etc.
-├── cars_proj/                  # Backend Spring Boot 3.3.4 (Java 21)
-│   ├── pom.xml
-│   ├── src/main/java/com/example/cars/
-│   │   ├── entities/           # Car.java, Brand.java
-│   │   ├── repos/              # CarRepository.java, BrandRepository.java (Requêtes Section 2)
-│   │   ├── service/            # CarService.java, CarServiceImpl.java
-│   │   ├── restcontrollers/    # CarRESTController.java (@CrossOrigin, Endpoints REST)
-│   │   └── CarsProjApplication.java  # Seeder de données au démarrage (CommandLineRunner)
-│   └── src/test/java/com/example/cars/
-│       └── CarsProjApplicationTests.java  # 10 Tests JUnit réussis (Section 2)
-│
-└── cars-frontend/              # Frontend Angular 20 (Tailwind CSS)
-    ├── package.json
-    ├── tailwind.config.js
+├── docker-compose.yml          # MySQL 8.4 + phpMyAdmin
+├── cars_proj/                  # API des voitures et des marques (port 8082, base cars_db)
+│   └── src/main/java/com/example/cars/
+│       ├── entities/           # Car, Brand
+│       ├── repos/              # CarRepository, BrandRepository (publié en Spring Data REST sur /brand)
+│       ├── service/            # CarService, CarServiceImpl
+│       ├── restcontrollers/    # CarRESTController
+│       ├── config/             # RestConfig (Spring Data REST)
+│       └── security/           # SecurityConfig, JWTAuthorizationFilter : vérifie les tokens
+├── users_proj/                 # Service des utilisateurs (port 8081, base users_db)
+│   └── src/main/java/com/example/users/
+│       ├── entities/           # User, Role, VerificationToken
+│       ├── service/            # UserServiceImpl (inscription, vérification), EmailService
+│       ├── exceptions/         # Erreurs d'inscription, renvoyées en JSON
+│       └── security/           # JWTAuthenticationFilter : crée les tokens sur /login
+└── cars-frontend/              # Frontend Angular 20 (port 4200)
     └── src/app/
-        ├── model/              # car.model.ts, brand.model.ts
-        ├── services/           # car.service.ts (Appels REST HttpClient)
-        ├── cars/               # Composant d'affichage (Tableau, Filtre par marque, Recherche)
-        ├── add-car/            # Formulaire d'ajout avec sélecteur dynamique de marque
-        └── update-car/         # Formulaire de modification
+        ├── cars/, add-car/, update-car/      # Parc automobile (CRUD)
+        ├── search-by-brand/, search-by-model/ # Recherche : serveur, keyup et pipe
+        ├── list-brands/, update-brand/        # Marques : parent et enfant (@Input, @Output)
+        ├── login/, register/, verify-email/   # Connexion et inscription
+        ├── guards/                            # authGuard (connecté), carGuard (ADMIN)
+        ├── interceptors/                      # Ajoute le token à chaque requête
+        └── services/                          # CarService, AuthService
 ```
 
 ---
 
-## 4. Endpoints API REST (Spring Boot - Port 8082)
+## 4. Endpoints API REST
 
-| Méthode | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/all` | Récupérer la liste complète des voitures avec leur marque |
-| `GET` | `/api/{id}` | Consulter les détails d'une voiture par son ID |
-| `POST` | `/api` | Ajouter une nouvelle voiture |
-| `PUT` | `/api` | Modifier les caractéristiques d'une voiture |
-| `DELETE` | `/api/{id}` | Supprimer une voiture par son ID |
-| `GET` | `/api/carsbrand/{idBrand}` | Filtrer les voitures selon une marque spécifique |
-| `GET` | `/api/carsbymodel/{keyword}` | Rechercher les voitures par mot-clé du modèle |
-| `GET` | `/api/brands` | Lister toutes les marques pour le sélecteur |
+### API des voitures (`http://localhost:8082`)
+
+Chaque requête doit envoyer `Authorization: Bearer <token>`.
+
+| Méthode | Endpoint | Rôle requis | Description |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/all` | ADMIN, USER | Liste des voitures avec leur marque |
+| `GET` | `/api/{id}` | ADMIN, USER | Détails d'une voiture |
+| `POST` | `/api` | ADMIN | Ajouter une voiture |
+| `PUT` | `/api` | ADMIN | Modifier une voiture |
+| `DELETE` | `/api/{id}` | ADMIN | Supprimer une voiture |
+| `GET` | `/api/carsbrand/{idBrand}` | ADMIN, USER | Voitures d'une marque |
+| `GET` | `/api/carsbymodel/{model}` | ADMIN, USER | Recherche par mot-clé du modèle |
+| `GET` | `/api/brands`, `/api/brands/{id}` | ADMIN, USER | Marques (JSON simple) |
+| `GET` | `/brand`, `/brand/{id}` | ADMIN, USER | Marques avec Spring Data REST (format HAL) |
+| `POST`, `PUT`, `DELETE` | `/brand`, `/brand/{id}` | ADMIN | Gérer les marques |
+
+### Service des utilisateurs (`http://localhost:8081`)
+
+| Méthode | Endpoint | Rôle requis | Description |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/login` | Public | Renvoie le token dans l'en-tête `Authorization` |
+| `POST` | `/register` | Public | Crée un compte désactivé et envoie un code par email |
+| `GET` | `/verifyEmail/{code}` | Public | Active le compte (le code expire après 15 minutes) |
+| `GET` | `/all` | ADMIN | Liste des utilisateurs |
+
+**401** : pas de token, ou token invalide. **403** : token valide, mais le rôle n'est pas autorisé.
 
 ---
 
@@ -94,34 +113,50 @@ Dans le dossier racine `SOA` :
 ```bash
 docker compose up -d
 ```
-- **MySQL** : `localhost:3306` (Base : `cars_db`, Utilisateur : `root`, sans mot de passe)
+- **MySQL** : `localhost:3306` (Utilisateur : `root`, sans mot de passe). Les bases `cars_db` et `users_db` sont créées automatiquement.
 - **phpMyAdmin** : `http://localhost:8080`
 
-### Étape 2 : Démarrer le Backend Spring Boot
-Dans le dossier `cars_proj` :
+### Étape 2 : Démarrer les deux services Spring Boot
+Dans deux terminaux, l'un dans `users_proj` et l'autre dans `cars_proj` :
 ```bash
 # Windows
 .\mvnw.cmd spring-boot:run
 
 # Linux / Mac
-./mvnw spring-boot:run
+sh mvnw spring-boot:run
 ```
-L'API démarre sur : **`http://localhost:8082`**
-Des données de test (BMW, Audi, Mercedes-Benz, Porsche) sont automatiquement initialisées dans MySQL au premier lancement.
+- **Service des utilisateurs** : `http://localhost:8081`
+- **API des voitures** : `http://localhost:8082`
 
-### Étape 3 : Exécuter les Tests Unitaires (Section 2)
-Dans le dossier `cars_proj` :
-```bash
-.\mvnw.cmd test
-```
-*Résultat : 10 tests exécutés, 0 échec.*
-
-### Étape 4 : Démarrer le Frontend Angular
+### Étape 3 : Démarrer le Frontend Angular
 Dans le dossier `cars-frontend` :
 ```bash
+npm install
 npm start
 ```
 L'application web est accessible sur : **`http://localhost:4200`**
+
+### Comptes de démonstration
+
+| Utilisateur | Mot de passe | Rôles |
+| :--- | :--- | :--- |
+| `admin` | `admin123` | ADMIN, USER |
+| `yasser` | `yasser123` | USER |
+
+Ces comptes servent uniquement au développement local.
+
+### Variables d'environnement (facultatives)
+
+| Variable | Rôle | Sans cette variable |
+| :--- | :--- | :--- |
+| `JWT_SECRET` | Clé de signature, identique dans les deux services | Clé de développement publique |
+| `MAIL_USERNAME`, `MAIL_PASSWORD` | Compte SMTP (mot de passe d'application Gmail) | Le code de vérification s'affiche dans la console de `users_proj` |
+
+### Exécuter les tests
+MySQL doit être démarré. Dans `users_proj` ou `cars_proj` :
+```bash
+.\mvnw.cmd test
+```
 
 ---
 
