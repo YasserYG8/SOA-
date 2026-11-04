@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Car } from '../model/car.model';
 import { Brand } from '../model/brand.model';
+import { environment } from '../../environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -13,7 +14,7 @@ const httpOptions = {
 })
 export class CarService {
 
-  apiURL: string = 'http://localhost:8082/api';
+  apiURL: string = environment.apiURL;
 
   constructor(private http: HttpClient) { }
 
@@ -49,7 +50,7 @@ export class CarService {
   }
 
   searchCarsByModel(model: string): Observable<Car[]> {
-    const url = `${this.apiURL}/carsbymodel/${model}`;
+    const url = `${this.apiURL}/carsbymodel/${encodeURIComponent(model)}`;
     return this.http.get<Car[]>(url);
   }
 }

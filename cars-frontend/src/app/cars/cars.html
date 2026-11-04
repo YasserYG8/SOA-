@@ -224,7 +224,9 @@
       </div>
 
     </div>
-}
+} @empty {
+      <div class="col-span-full"><ng-container [ngTemplateOutlet]="noCars"></ng-container></div>
+    }
   </div>
 }
 
@@ -235,6 +237,7 @@
       <table class="min-w-full divide-y divide-slate-100">
         <thead class="bg-slate-50/75">
           <tr>
+            <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">#</th>
             <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Vehicle</th>
             <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Manufacturer</th>
             <th scope="col" class="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">Price</th>
@@ -246,6 +249,7 @@
         <tbody class="divide-y divide-slate-100 bg-white">
           @for (c of filteredCars; track c.idCar) {
 <tr class="hover:bg-slate-50/60 transition-colors">
+            <td class="px-5 py-3.5 whitespace-nowrap text-xs font-mono text-slate-400">{{ $index + 1 }}</td>
             <!-- Vehicle Info & Thumbnail -->
             <td class="px-5 py-3.5 whitespace-nowrap">
               <div class="flex items-center gap-3">
@@ -311,17 +315,18 @@
               </button>
             </td>
           </tr>
-}
+} @empty {
+            <tr><td colspan="7" class="p-4"><ng-container [ngTemplateOutlet]="noCars"></ng-container></td></tr>
+          }
         </tbody>
       </table>
     </div>
   </div>
 }
 
-  <!-- EMPTY STATE -->
-  @if (!isLoading && filteredCars.length === 0) {
-<div 
-       class="bg-white rounded-2xl border border-slate-200/80 p-12 text-center my-6">
+  <!-- EMPTY STATE, shown by each view's empty block -->
+  <ng-template #noCars>
+    <div class="bg-white rounded-2xl border border-slate-200/80 p-12 text-center my-6">
     <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -334,7 +339,7 @@
       Clear all filters
     </button>
   </div>
-}
+  </ng-template>
 
   <!-- QUICK VIEW SPECIFICATIONS MODAL -->
   @if (selectedCarForModal) {
