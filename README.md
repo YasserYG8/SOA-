@@ -122,3 +122,29 @@ Dans le dossier `cars-frontend` :
 npm start
 ```
 L'application web est accessible sur : **`http://localhost:4200`**
+
+---
+
+## 6. Le token JWT
+
+Un JWT (JSON Web Token) est une chaîne signée qui prouve qui est l'utilisateur et quels sont ses rôles. Le serveur n'a donc pas besoin de garder une session.
+
+**Structure** : trois parties en Base64URL séparées par des points, `header.payload.signature`.
+
+| Partie | Contenu | Exemple |
+| :--- | :--- | :--- |
+| Header | Algorithme de signature et type | `{"alg":"HS256","typ":"JWT"}` |
+| Payload | Données : `sub` (utilisateur), `roles`, `exp` (expiration) | `{"sub":"admin","roles":["ADMIN"],"exp":1730000000}` |
+| Signature | HMAC du header et du payload avec la clé secrète | Prouve que le token n'a pas été modifié |
+
+Le payload est **encodé, pas chiffré** : tout le monde peut le lire, donc il ne contient jamais de mot de passe. La signature empêche de le modifier.
+
+**Fonctionnement** :
+
+1. L'utilisateur envoie son nom et son mot de passe à `/login`.
+2. Le serveur les vérifie, crée un JWT signé et le renvoie dans l'en-tête `Authorization`.
+3. Le client garde le token (dans `localStorage` pour Angular).
+4. À chaque requête, le client envoie `Authorization: Bearer <token>`.
+5. Le serveur vérifie la signature et l'expiration, lit les rôles, puis accepte ou refuse (401 / 403).
+
+**Session ou JWT** : une session est stockée sur le serveur (stateful), ce qui complique le passage à plusieurs serveurs. Un JWT est porté par le client et vérifié avec la clé (stateless), ce qui convient aux microservices et aux SPA.
