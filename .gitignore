@@ -6,6 +6,9 @@ Thumbs.db
 cars_proj/target/
 cars_proj/.mvn/timing.properties
 cars_proj/.mvn/wrapper/maven-wrapper.jar
+users_proj/target/
+users_proj/.mvn/timing.properties
+users_proj/.mvn/wrapper/maven-wrapper.jar
 
 # Frontend (Angular & Node)
 cars-frontend/node_modules/
