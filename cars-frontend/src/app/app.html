@@ -22,6 +22,7 @@
         </div>
 
         <!-- Navigation Links -->
+        @if (authService.isloggedIn) {
         <nav class="flex flex-wrap items-center gap-1 sm:gap-2">
           <a routerLink="/cars"
              routerLinkActive="bg-blue-50 text-blue-700 font-semibold"
@@ -54,6 +55,7 @@
           </a>
           }
         </nav>
+        }
 
         <!-- Logged-in user -->
         <div class="flex items-center gap-3 text-sm">
