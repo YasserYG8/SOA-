@@ -14,6 +14,10 @@ CarHub is a course mini-project: a car showroom secured with JWT. It has three i
 
 Both databases live in the same Docker MySQL 8.4 and are created on first start. phpMyAdmin takes port 8080.
 
+## Local settings
+
+`JWT_SECRET`, `MAIL_USERNAME` and `MAIL_PASSWORD` live in a `.env` file at the repo root, which Git ignores (`.env.example` is the template). Both services import it through `spring.config.import` in `application.properties` and need a restart after a change. It is read as a properties file, so values take no quotes. Read settings through Spring properties, because `System.getenv` does not see this file.
+
 ## Commands
 
 Start the database first. Both backends and their tests need it.
@@ -44,7 +48,7 @@ To exercise the APIs by hand, use `CarHub_Postman_Collection.json` (run its Logi
 
 ## Architecture
 
-**Authentication flow:** `users_proj` creates tokens and `cars_proj` only checks them. `POST /login` is handled by `JWTAuthenticationFilter`, which returns the token, without a `Bearer ` prefix, in the `Authorization` response header. Angular stores it in `localStorage`, and `token.interceptor.ts` adds `Bearer <token>` to every request except `/login`, `/register` and `/verifyEmail`. Each backend's `JWTAuthorizationFilter` verifies the token. Both read the key from `SecParams.SECRET`, which comes from `JWT_SECRET` with a shared development fallback, so **the two services must use the same value**. `SecParams` and the filter are deliberately duplicated in each project.
+**Authentication flow:** `users_proj` creates tokens and `cars_proj` only checks them. `POST /login` is handled by `JWTAuthenticationFilter`, which returns the token, without a `Bearer ` prefix, in the `Authorization` response header. Angular stores it in `localStorage`, and `token.interceptor.ts` adds `Bearer <token>` to every request except `/login`, `/register` and `/verifyEmail`. Each backend's `JWTAuthorizationFilter` verifies the token. Both read the key from the `jwt.secret` property, which comes from `JWT_SECRET` with a shared development fallback, so **the two services must use the same value**. `SecParams` and the filter are deliberately duplicated in each project.
 
 **Security rules:** `cars_proj/.../security/SecurityConfig.java` holds the URL rules: GET needs ADMIN or USER, and writes need ADMIN. `@PreAuthorize` on the controller's write methods repeats the check. A new endpoint falls through to `anyRequest().authenticated()`, so any logged-in user can reach it until a rule is added. An invalid token leaves the caller anonymous rather than raising an error, so public routes keep working with a stale token and protected routes answer 401. CORS allows only `http://localhost:4200` and is configured in `SecurityConfig`, not with `@CrossOrigin`.
 

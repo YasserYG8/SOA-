@@ -19,13 +19,19 @@ import jakarta.servlet.http.HttpServletResponse;
 // This API never creates tokens. It trusts the ones signed by users_proj with the shared key.
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
+    private final String secret;
+
+    public JWTAuthorizationFilter(String secret) {
+        this.secret = secret;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith(SecParams.PREFIX)) {
             try {
-                DecodedJWT decoded = JWT.require(Algorithm.HMAC256(SecParams.SECRET)).build()
+                DecodedJWT decoded = JWT.require(Algorithm.HMAC256(secret)).build()
                         .verify(header.substring(SecParams.PREFIX.length())); // checks the signature + expiry
                 List<String> roles = decoded.getClaim("roles").asList(String.class);
                 List<GrantedAuthority> authorities = (roles == null ? List.<String>of() : roles).stream()

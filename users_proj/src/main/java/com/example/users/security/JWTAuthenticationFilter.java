@@ -29,9 +29,11 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final String secret;
 
-    public JWTAuthenticationFilter(AuthenticationManager authenticationManager) {
+    public JWTAuthenticationFilter(AuthenticationManager authenticationManager, String secret) {
         super(authenticationManager);
+        this.secret = secret;
     }
 
     @Override
@@ -58,7 +60,7 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .withSubject(user.getUsername())
                 .withArrayClaim("roles", roles)
                 .withExpiresAt(new Date(System.currentTimeMillis() + SecParams.EXP_TIME))
-                .sign(Algorithm.HMAC256(SecParams.SECRET));
+                .sign(Algorithm.HMAC256(secret));
 
         response.addHeader("Authorization", jwt);
     }

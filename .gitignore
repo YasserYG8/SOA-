@@ -25,3 +25,6 @@ cars-frontend/yarn-error.log*
 *.class
 *.log
 screens/
+
+# Local settings and passwords
+.env

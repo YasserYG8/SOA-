@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Date;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -27,6 +28,9 @@ class UsersProjApplicationTests {
     @Autowired
     private MockMvc mvc;
 
+    @Value("${jwt.secret}")
+    private String secret;
+
     private ResultActions login(String username, String password) throws Exception {
         return mvc.perform(post("/login").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}"));
@@ -39,7 +43,7 @@ class UsersProjApplicationTests {
 
     @Test
     void loginReturnsASignedTokenWithTheRoles() throws Exception {
-        DecodedJWT decoded = JWT.require(Algorithm.HMAC256(SecParams.SECRET)).build()
+        DecodedJWT decoded = JWT.require(Algorithm.HMAC256(secret)).build()
                 .verify(tokenFor("admin", "admin123"));
 
         assertThat(decoded.getSubject()).isEqualTo("admin");

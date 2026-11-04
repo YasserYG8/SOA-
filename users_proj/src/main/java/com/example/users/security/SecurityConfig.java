@@ -1,6 +1,7 @@
 package com.example.users.security;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
+
+    @Value("${jwt.secret}")
+    private String secret;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -44,8 +48,8 @@ public class SecurityConfig {
                         .requestMatchers("/login", "/register", "/verifyEmail/**", "/error").permitAll()
                         .requestMatchers("/all").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
-                .addFilter(new JWTAuthenticationFilter(authenticationManager))
-                .addFilterBefore(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+                .addFilter(new JWTAuthenticationFilter(authenticationManager, secret))
+                .addFilterBefore(new JWTAuthorizationFilter(secret), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

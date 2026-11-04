@@ -145,7 +145,9 @@ L'application web est accessible sur : **`http://localhost:4200`**
 
 Ces comptes servent uniquement au développement local.
 
-### Variables d'environnement (facultatives)
+### Fichier `.env` (facultatif)
+
+Copiez `.env.example` vers `.env` à la racine, puis remplissez-le. Git ignore ce fichier, et les deux services le lisent au démarrage. Redémarrez-les après chaque modification.
 
 | Variable | Rôle | Sans cette variable |
 | :--- | :--- | :--- |

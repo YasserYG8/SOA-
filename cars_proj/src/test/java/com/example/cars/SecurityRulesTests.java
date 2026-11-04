@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Date;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -32,20 +33,23 @@ class SecurityRulesTests {
     @Autowired
     private MockMvc mvc;
 
-    private String bearer(String secret, long lifetimeMs, String... roles) {
+    @Value("${jwt.secret}")
+    private String secret;
+
+    private String bearer(String key, long lifetimeMs, String... roles) {
         return SecParams.PREFIX + JWT.create()
                 .withSubject("test")
                 .withArrayClaim("roles", roles)
                 .withExpiresAt(new Date(System.currentTimeMillis() + lifetimeMs))
-                .sign(Algorithm.HMAC256(secret));
+                .sign(Algorithm.HMAC256(key));
     }
 
     private String admin() {
-        return bearer(SecParams.SECRET, 60_000, "ADMIN", "USER");
+        return bearer(secret, 60_000, "ADMIN", "USER");
     }
 
     private String user() {
-        return bearer(SecParams.SECRET, 60_000, "USER");
+        return bearer(secret, 60_000, "USER");
     }
 
     @Test
@@ -62,7 +66,7 @@ class SecurityRulesTests {
 
     @Test
     void expiredTokenIs401() throws Exception {
-        String expired = bearer(SecParams.SECRET, -60_000, "ADMIN");
+        String expired = bearer(secret, -60_000, "ADMIN");
         mvc.perform(get("/api/all").header("Authorization", expired)).andExpect(status().isUnauthorized());
     }
 
