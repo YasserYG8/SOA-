@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Car } from '../model/car.model';
 import { Brand } from '../model/brand.model';
 import { CarService } from '../services/car.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-cars',
@@ -32,7 +33,7 @@ export class CarsComponent implements OnInit {
 
   fallbackImage: string = 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80';
 
-  constructor(private carService: CarService) {}
+  constructor(private carService: CarService, public authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadInitialData();
@@ -42,7 +43,7 @@ export class CarsComponent implements OnInit {
     this.isLoading = true;
     this.carService.brandList().subscribe({
       next: (b) => {
-        this.brands = b;
+        this.brands = b._embedded.brands;
       },
       error: (err) => console.error('Error loading brands', err)
     });

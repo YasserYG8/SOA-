@@ -27,13 +27,15 @@
         <p class="mt-1 text-sm text-slate-500">Explore specifications, pricing, and manufacturer relations</p>
       </div>
       <div class="flex items-center gap-3">
-        <a routerLink="/add-car"
+        @if (authService.isAdmin()) {
+<a routerLink="/add-car"
            class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-medium rounded-xl shadow-sm hover:shadow transition-all duration-150 focus:ring-4 focus:ring-slate-300">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
           <span>Add New Car</span>
         </a>
+}
       </div>
     </div>
 
@@ -211,7 +213,8 @@
             Quick View
           </button>
           <div class="flex items-center gap-1.5">
-            <a [routerLink]="['/update-car', c.idCar]"
+            @if (authService.isAdmin()) {
+<a [routerLink]="['/update-car', c.idCar]"
                class="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
               Edit
             </a>
@@ -219,6 +222,7 @@
                     class="px-3 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
               Delete
             </button>
+}
           </div>
         </div>
       </div>
@@ -305,7 +309,8 @@
                       class="px-2.5 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors">
                 View
               </button>
-              <a [routerLink]="['/update-car', c.idCar]"
+              @if (authService.isAdmin()) {
+<a [routerLink]="['/update-car', c.idCar]"
                  class="px-2.5 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
                 Edit
               </a>
@@ -313,6 +318,7 @@
                       class="px-2.5 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors">
                 Delete
               </button>
+}
             </td>
           </tr>
 } @empty {
@@ -402,11 +408,13 @@
                   class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">
             Close
           </button>
-          <a [routerLink]="['/update-car', selectedCarForModal.idCar]"
+          @if (authService.isAdmin()) {
+<a [routerLink]="['/update-car', selectedCarForModal.idCar]"
              (click)="closeQuickView()"
              class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors">
             Edit Vehicle
           </a>
+}
         </div>
       </div>
 

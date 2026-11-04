@@ -70,7 +70,7 @@ export class AddCarComponent implements OnInit {
   ngOnInit(): void {
     this.carService.brandList().subscribe({
       next: (b) => {
-        this.brands = b;
+        this.brands = b._embedded.brands;
         if (this.brands.length > 0) {
           this.newIdBrand = this.brands[0].idBrand;
         }

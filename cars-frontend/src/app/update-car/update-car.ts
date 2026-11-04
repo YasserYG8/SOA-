@@ -32,7 +32,7 @@ export class UpdateCarComponent implements OnInit {
 
     this.carService.brandList().subscribe({
       next: (b) => {
-        this.brands = b;
+        this.brands = b._embedded.brands;
       },
       error: (err) => console.error('Error fetching brands', err)
     });

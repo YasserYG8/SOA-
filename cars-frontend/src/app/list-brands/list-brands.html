@@ -1,0 +1,49 @@
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+  <div class="flex items-center justify-between gap-3">
+    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Brands</h1>
+    @if (!add) {
+      <button type="button" (click)="newBrand()"
+              class="px-3.5 py-2 text-xs font-semibold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors">
+        Cancel edit
+      </button>
+    }
+  </div>
+
+  @if (errorMessage) {
+    <p class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm">{{ errorMessage }}</p>
+  }
+
+  <app-update-brand [brand]="updatedBrand" [add]="add" (brandUpdated)="brandUpdated($event)"></app-update-brand>
+
+  <div class="bg-white rounded-2xl border border-slate-200/80 overflow-x-auto">
+    <table class="min-w-full divide-y divide-slate-100 text-sm">
+      <thead class="bg-slate-50/75 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <tr>
+          <th class="px-5 py-3">ID</th>
+          <th class="px-5 py-3">Name</th>
+          <th class="px-5 py-3">Country</th>
+          <th class="px-5 py-3">Description</th>
+          <th class="px-5 py-3 text-right">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        @for (b of brands; track b.idBrand) {
+          <tr>
+            <td class="px-5 py-3 font-mono text-xs text-slate-400">{{ b.idBrand }}</td>
+            <td class="px-5 py-3 font-semibold text-slate-900">{{ b.name }}</td>
+            <td class="px-5 py-3">{{ b.country }}</td>
+            <td class="px-5 py-3 text-slate-500">{{ b.description }}</td>
+            <td class="px-5 py-3 text-right">
+              <button type="button" (click)="editBrand(b)"
+                      class="px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors">
+                Edit
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5" class="px-5 py-8 text-center text-slate-500">No brands yet.</td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

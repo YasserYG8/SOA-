@@ -1,0 +1,26 @@
+<div class="max-w-md mx-auto px-4 sm:px-6 py-12">
+  <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+    <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 mb-6">Log in to CarHub</h1>
+
+    @if (errorMessage) {
+      <p class="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm">{{ errorMessage }}</p>
+    }
+
+    <form (ngSubmit)="onLoggedin()" #loginForm="ngForm" class="space-y-4">
+      <div>
+        <label for="username" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Username</label>
+        <input id="username" name="username" type="text" required autocomplete="username" [(ngModel)]="user.username"
+               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100" />
+      </div>
+      <div>
+        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Password</label>
+        <input id="password" name="password" type="password" required autocomplete="current-password" [(ngModel)]="user.password"
+               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100" />
+      </div>
+      <button type="submit" [disabled]="loginForm.invalid"
+              class="w-full px-6 py-2.5 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl transition-colors">
+        Log in
+      </button>
+    </form>
+  </div>
+</div>

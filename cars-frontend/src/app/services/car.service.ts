@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Car } from '../model/car.model';
 import { Brand } from '../model/brand.model';
+import { BrandWrapper } from '../model/brand-wrapper.model';
 import { environment } from '../../environments/environment';
 
 const httpOptions = {
@@ -40,8 +41,16 @@ export class CarService {
     return this.http.put<Car>(this.apiURL, car, httpOptions);
   }
 
-  brandList(): Observable<Brand[]> {
-    return this.http.get<Brand[]>(this.apiURL + '/brands');
+  brandList(): Observable<BrandWrapper> {
+    return this.http.get<BrandWrapper>(environment.apiURLBrand);
+  }
+
+  addBrand(brand: Brand): Observable<Brand> {
+    return this.http.post<Brand>(environment.apiURLBrand, brand, httpOptions);
+  }
+
+  updateBrand(brand: Brand): Observable<Brand> {
+    return this.http.put<Brand>(`${environment.apiURLBrand}/${brand.idBrand}`, brand, httpOptions);
   }
 
   filterCarsByBrand(idBrand: number): Observable<Car[]> {

@@ -1,0 +1,44 @@
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">Search by Brand</h1>
+  <p class="text-sm text-slate-500 mt-1 mb-6">Each selection asks the server for that brand's cars.</p>
+
+  @if (errorMessage) {
+    <p class="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm">{{ errorMessage }}</p>
+  }
+
+  <label for="brand" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Brand</label>
+  <select id="brand" name="brand" [(ngModel)]="idBrand" (change)="onChange()"
+          class="w-full sm:w-80 mb-6 px-4 py-2.5 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100">
+    <option [ngValue]="0">Choose a brand...</option>
+    @for (b of brands; track b.idBrand) {
+      <option [ngValue]="b.idBrand">{{ b.name }} ({{ b.country }})</option>
+    }
+  </select>
+
+  <div class="bg-white rounded-2xl border border-slate-200/80 overflow-x-auto">
+    <table class="min-w-full divide-y divide-slate-100 text-sm">
+      <thead class="bg-slate-50/75 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <tr>
+          <th class="px-5 py-3">Model</th>
+          <th class="px-5 py-3">Price</th>
+          <th class="px-5 py-3">Release Date</th>
+          <th class="px-5 py-3">Plate</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        @for (c of cars; track c.idCar) {
+          <tr>
+            <td class="px-5 py-3 font-semibold text-slate-900">{{ c.model }}</td>
+            <td class="px-5 py-3">{{ c.price | currency:'EUR':'symbol':'1.0-0' }}</td>
+            <td class="px-5 py-3 text-slate-500">{{ c.releaseDate | date:'dd/MM/yyyy' }}</td>
+            <td class="px-5 py-3 font-mono text-xs">{{ c.licensePlate }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4" class="px-5 py-8 text-center text-slate-500">
+            {{ idBrand ? 'This brand has no cars.' : 'Choose a brand to see its cars.' }}
+          </td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
