@@ -1,6 +1,7 @@
 package com.example.users;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,5 +51,30 @@ class UsersProjApplicationTests {
     void wrongPasswordIsRefused() throws Exception {
         login("admin", "wrong").andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.errorCode").value("BAD_CREDENTIALS"));
+    }
+
+    @Test
+    void allWithoutTokenIs401() throws Exception {
+        mvc.perform(get("/all")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void allWithInvalidTokenIs401() throws Exception {
+        mvc.perform(get("/all").header("Authorization", "Bearer not-a-token"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void allWithUserRoleIs403() throws Exception {
+        mvc.perform(get("/all").header("Authorization", SecParams.PREFIX + tokenFor("yasser", "yasser123")))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void allWithAdminRoleWorksAndHidesPasswords() throws Exception {
+        mvc.perform(get("/all").header("Authorization", SecParams.PREFIX + tokenFor("admin", "admin123")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].username").exists())
+                .andExpect(jsonPath("$[0].password").doesNotExist());
     }
 }
