@@ -1,6 +1,7 @@
 package com.example.users.service;
 
 import java.util.List;
+import com.example.users.dto.RegistrationRequest;
 import com.example.users.entities.Role;
 import com.example.users.entities.User;
 
@@ -16,4 +17,8 @@ public interface UserService {
     User addRoleToUser(String username, String rolename);
 
     List<User> findAllUsers();
+
+    User registerUser(RegistrationRequest request);
+
+    User verifyEmail(String code);
 }

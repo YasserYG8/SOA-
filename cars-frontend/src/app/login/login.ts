@@ -1,26 +1,29 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { User } from '../model/user.model';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './login.html',
 })
 export class LoginComponent implements OnInit {
 
   user = new User();
   errorMessage: string = '';
+  infoMessage: string = '';
 
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     if (!this.authService.isTokenExpired()) {
       this.router.navigate(['/']);
+      return;
     }
+    this.infoMessage = history.state?.message ?? '';
   }
 
   onLoggedin(): void {

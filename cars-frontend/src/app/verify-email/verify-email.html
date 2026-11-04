@@ -1,0 +1,28 @@
+<div class="max-w-md mx-auto px-4 sm:px-6 py-12">
+  <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8">
+    <h1 class="text-2xl font-extrabold tracking-tight text-slate-900">Verify your email</h1>
+    <p class="text-sm text-slate-500 mt-1 mb-6">
+      Enter the 6-digit code we sent{{ email ? ' to ' + email : '' }}. It expires after 15 minutes.
+    </p>
+
+    @if (errorMessage) {
+      <p class="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm">{{ errorMessage }}</p>
+    }
+
+    <form (ngSubmit)="onVerify()" #verifyForm="ngForm" class="space-y-4">
+      <div>
+        <label for="code" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Verification code</label>
+        <input id="code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" required pattern="[0-9]{6}" maxlength="6" [(ngModel)]="code"
+               class="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm font-mono tracking-widest focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100" />
+      </div>
+      <button type="submit" [disabled]="verifyForm.invalid"
+              class="w-full px-6 py-2.5 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl transition-colors">
+        Verify email
+      </button>
+    </form>
+
+    <p class="mt-6 text-sm text-slate-500 text-center">
+      Code expired or not received? <a routerLink="/register" class="font-semibold text-blue-600 hover:underline">Register again</a> with the same details.
+    </p>
+  </div>
+</div>

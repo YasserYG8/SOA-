@@ -41,7 +41,7 @@ public class SecurityConfig {
                 // No or invalid token answers 401. Without this, Spring Security answers 403.
                 .exceptionHandling(e -> e.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/error").permitAll()
+                        .requestMatchers("/login", "/register", "/verifyEmail/**", "/error").permitAll()
                         .requestMatchers("/all").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .addFilter(new JWTAuthenticationFilter(authenticationManager))

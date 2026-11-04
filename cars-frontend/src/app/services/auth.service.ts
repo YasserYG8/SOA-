@@ -63,6 +63,14 @@ export class AuthService {
     return this.roles.includes('ADMIN');
   }
 
+  register(user: User): Observable<User> {
+    return this.http.post<User>(environment.authURL + '/register', user);
+  }
+
+  verifyEmail(code: string): Observable<User> {
+    return this.http.get<User>(`${environment.authURL}/verifyEmail/${encodeURIComponent(code)}`);
+  }
+
   private useToken(jwt: string): void {
     const decoded = this.helper.decodeToken(jwt);
     this.token = jwt;

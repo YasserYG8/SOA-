@@ -3,8 +3,8 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
-// Nobody is logged in yet when this route is called.
-const PUBLIC_URLS = ['/login'];
+// These routes work without a token, and nobody is logged in yet when they are called.
+const PUBLIC_URLS = ['/login', '/register', '/verifyEmail'];
 
 export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   if (PUBLIC_URLS.some(url => req.url.includes(url))) {

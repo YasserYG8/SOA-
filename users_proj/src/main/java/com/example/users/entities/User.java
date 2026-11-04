@@ -27,6 +27,9 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
+    @Column(unique = true)
+    private String email;
+
     private Boolean enabled;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -68,6 +71,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Boolean getEnabled() {
