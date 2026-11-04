@@ -1,0 +1,10 @@
+{
+  "model": "Roma Spider",
+  "price": 245000.0,
+  "releaseDate": "2024-05-10",
+  "licensePlate": "249-TUN-8888",
+  "imagePath": "https://images.unsplash.com/photo-1592198084033-aade902d1aae",
+  "brand": {
+    "idBrand": 5
+  }
+}

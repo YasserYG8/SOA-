@@ -24,13 +24,8 @@ public class CarRESTController {
     @Autowired
     private CarService carService;
 
-    @RequestMapping(method = RequestMethod.GET)
-    public List<Car> getAllCars() {
-        return carService.getAllCars();
-    }
-
     @GetMapping("/all")
-    public List<Car> getAllCarsList() {
+    public List<Car> getAllCars() {
         return carService.getAllCars();
     }
 

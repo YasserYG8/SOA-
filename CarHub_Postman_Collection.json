@@ -1,0 +1,205 @@
+{
+  "info": {
+    "_postman_id": "carhub-api-collection-2026",
+    "name": "CarHub Spring Boot API",
+    "description": "Complete Postman collection for CarHub Spring Boot 3 & Angular fullstack platform.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Get All Cars (/api/all)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/all",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "all"]
+        },
+        "description": "Fetch all cars for the showroom fleet"
+      },
+      "response": []
+    },
+    {
+      "name": "2. Get Single Car by ID (/api/1)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "1"]
+        },
+        "description": "Retrieve car with ID 1 (M4 Competition)"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Get All Brands (/api/brands)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/brands",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "brands"]
+        },
+        "description": "Retrieve all manufacturers"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Get Brand by ID (/api/brands/1)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/brands/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "brands", "1"]
+        },
+        "description": "Retrieve BMW brand details"
+      },
+      "response": []
+    },
+    {
+      "name": "5. Filter Cars by Brand ID (/api/carsbrand/1)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/carsbrand/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "carsbrand", "1"]
+        },
+        "description": "Retrieve all cars manufactured by BMW (ID 1)"
+      },
+      "response": []
+    },
+    {
+      "name": "6. Search Cars by Model (/api/carsbymodel/M4)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/carsbymodel/M4",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "carsbymodel", "M4"]
+        },
+        "description": "Search for cars with 'M4' in model name"
+      },
+      "response": []
+    },
+    {
+      "name": "7. Create New Car (POST /api)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"model\": \"Roma Spider\",\n  \"price\": 245000.0,\n  \"releaseDate\": \"2024-05-10\",\n  \"licensePlate\": \"249-TUN-8888\",\n  \"imagePath\": \"https://images.unsplash.com/photo-1592198084033-aade902d1aae\",\n  \"brand\": {\n    \"idBrand\": 5\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          },
+          "COPY_PASTE_JSON_BODY": {
+            "model": "Roma Spider",
+            "price": 245000.0,
+            "releaseDate": "2024-05-10",
+            "licensePlate": "249-TUN-8888",
+            "imagePath": "https://images.unsplash.com/photo-1592198084033-aade902d1aae",
+            "brand": {
+              "idBrand": 5
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8082/api",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api"]
+        },
+        "description": "Add a new Ferrari Roma Spider"
+      },
+      "response": []
+    },
+    {
+      "name": "8. Update Car (PUT /api)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"idCar\": 1,\n  \"model\": \"M4 Competition xDrive\",\n  \"price\": 94500.0,\n  \"releaseDate\": \"2023-04-12\",\n  \"licensePlate\": \"235-TUN-4040\",\n  \"imagePath\": \"https://images.unsplash.com/photo-1617814076367-b759c7d7e738\",\n  \"brand\": {\n    \"idBrand\": 1\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          },
+          "COPY_PASTE_JSON_BODY": {
+            "idCar": 1,
+            "model": "M4 Competition xDrive",
+            "price": 94500.0,
+            "releaseDate": "2023-04-12",
+            "licensePlate": "235-TUN-4040",
+            "imagePath": "https://images.unsplash.com/photo-1617814076367-b759c7d7e738",
+            "brand": {
+              "idBrand": 1
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8082/api",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api"]
+        },
+        "description": "Update Car ID 1"
+      },
+      "response": []
+    },
+    {
+      "name": "9. Delete Car (DELETE /api/8)",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8082/api/8",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "8"]
+        },
+        "description": "Delete Car with ID 8"
+      },
+      "response": []
+    }
+  ]
+}

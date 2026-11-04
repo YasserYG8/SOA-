@@ -1,0 +1,11 @@
+{
+  "idCar": 1,
+  "model": "M4 Competition xDrive",
+  "price": 94500.0,
+  "releaseDate": "2023-04-12",
+  "licensePlate": "235-TUN-4040",
+  "imagePath": "https://images.unsplash.com/photo-1617814076367-b759c7d7e738",
+  "brand": {
+    "idBrand": 1
+  }
+}
