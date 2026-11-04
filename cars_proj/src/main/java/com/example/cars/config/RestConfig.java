@@ -13,7 +13,5 @@ public class RestConfig implements RepositoryRestConfigurer {
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
         // Spring Data REST hides ids by default, but Angular needs idBrand for its dropdowns.
         config.exposeIdsFor(Brand.class);
-        // @CrossOrigin on the controller does not cover Spring Data REST routes.
-        cors.addMapping("/**").allowedOrigins("*").allowedMethods("GET", "POST", "PUT", "DELETE");
     }
 }
