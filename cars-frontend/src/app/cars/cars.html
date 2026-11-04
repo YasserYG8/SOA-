@@ -1,17 +1,23 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
   <!-- Toast Notification -->
-  <div *ngIf="toastMessage" 
+  @if (toastMessage) {
+<div 
        class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-xl shadow-lg border backdrop-blur-md transition-all duration-300 transform translate-y-0"
        [ngClass]="toastType === 'success' ? 'bg-emerald-900/90 text-white border-emerald-700/60' : 'bg-rose-900/90 text-white border-rose-700/60'">
-    <svg *ngIf="toastType === 'success'" class="w-5 h-5 text-emerald-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    @if (toastType === 'success') {
+<svg class="w-5 h-5 text-emerald-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
     </svg>
-    <svg *ngIf="toastType === 'error'" class="w-5 h-5 text-rose-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+}
+    @if (toastType === 'error') {
+<svg class="w-5 h-5 text-rose-300 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
+}
     <span class="text-sm font-medium">{{ toastMessage }}</span>
   </div>
+}
 
   <!-- Header & KPI Metric Cards -->
   <div class="mb-8">
@@ -66,11 +72,13 @@
         <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <button *ngIf="searchKeyword" (click)="clearSearch()" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
+        @if (searchKeyword) {
+<button (click)="clearSearch()" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
+}
       </div>
 
       <!-- Controls Row: Brand Filter, Sort, View Toggle -->
@@ -80,9 +88,11 @@
                 (change)="onBrandFilterChange()"
                 class="px-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white text-slate-800 focus:outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-100">
           <option [ngValue]="0">All Brands</option>
-          <option *ngFor="let b of brands" [ngValue]="b.idBrand">
+          @for (b of brands; track b.idBrand) {
+<option [ngValue]="b.idBrand">
             {{ b.name }} ({{ b.country }})
           </option>
+}
         </select>
 
         <!-- Sort Dropdown -->
@@ -120,8 +130,10 @@
   </div>
 
   <!-- SKELETON LOADING STATE -->
-  <div *ngIf="isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let item of [1,2,3,4,5,6]" class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden animate-pulse">
+  @if (isLoading) {
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (item of [1,2,3,4,5,6]; track item) {
+<div class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden animate-pulse">
       <div class="h-48 bg-slate-200"></div>
       <div class="p-5 space-y-3">
         <div class="h-5 bg-slate-200 rounded w-2/3"></div>
@@ -132,11 +144,15 @@
         </div>
       </div>
     </div>
+}
   </div>
+}
 
   <!-- SHOWROOM GRID VIEW -->
-  <div *ngIf="!isLoading && viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    <div *ngFor="let c of filteredCars" 
+  @if (!isLoading && viewMode === 'grid') {
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    @for (c of filteredCars; track c.idCar) {
+<div 
          class="group bg-white rounded-2xl border border-slate-200/80 overflow-hidden hover:border-slate-300 hover:shadow-md transition-all duration-200 flex flex-col">
       
       <!-- Photo Container -->
@@ -155,9 +171,11 @@
           </span>
         </div>
         <div class="absolute top-3 left-3">
-          <span *ngIf="c.brand" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white/95 text-slate-800 shadow-xs border border-slate-100">
+          @if (c.brand) {
+<span class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white/95 text-slate-800 shadow-xs border border-slate-100">
             {{ c.brand.name }}
           </span>
+}
         </div>
         <div class="absolute top-3 right-3">
           <span class="px-2.5 py-1 rounded-md text-xs font-mono bg-slate-900/80 text-white font-medium">
@@ -173,7 +191,9 @@
             <div>
               <h3 class="text-lg font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{{ c.model }}</h3>
               <p class="text-xs text-slate-500 mt-0.5">
-                <span *ngIf="c.brand">{{ c.brand.country }} • </span>Built: {{ c.releaseDate | date:'MMMM yyyy' }}
+                @if (c.brand) {
+<span>{{ c.brand.country }} • </span>
+}Built: {{ c.releaseDate | date:'MMMM yyyy' }}
               </p>
             </div>
             <div class="text-right">
@@ -204,10 +224,13 @@
       </div>
 
     </div>
+}
   </div>
+}
 
   <!-- TABLE VIEW -->
-  <div *ngIf="!isLoading && viewMode === 'table'" class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-xs">
+  @if (!isLoading && viewMode === 'table') {
+<div class="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-xs">
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-slate-100">
         <thead class="bg-slate-50/75">
@@ -221,7 +244,8 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 bg-white">
-          <tr *ngFor="let c of filteredCars" class="hover:bg-slate-50/60 transition-colors">
+          @for (c of filteredCars; track c.idCar) {
+<tr class="hover:bg-slate-50/60 transition-colors">
             <!-- Vehicle Info & Thumbnail -->
             <td class="px-5 py-3.5 whitespace-nowrap">
               <div class="flex items-center gap-3">
@@ -241,11 +265,15 @@
 
             <!-- Brand -->
             <td class="px-5 py-3.5 whitespace-nowrap">
-              <span *ngIf="c.brand" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
+              @if (c.brand) {
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-700">
                 <span>{{ c.brand.name }}</span>
                 <span class="text-slate-400 text-[10px]">({{ c.brand.country }})</span>
               </span>
-              <span *ngIf="!c.brand" class="text-xs text-slate-400 italic">None</span>
+}
+              @if (!c.brand) {
+<span class="text-xs text-slate-400 italic">None</span>
+}
             </td>
 
             <!-- Price -->
@@ -283,13 +311,16 @@
               </button>
             </td>
           </tr>
+}
         </tbody>
       </table>
     </div>
   </div>
+}
 
   <!-- EMPTY STATE -->
-  <div *ngIf="!isLoading && filteredCars.length === 0" 
+  @if (!isLoading && filteredCars.length === 0) {
+<div 
        class="bg-white rounded-2xl border border-slate-200/80 p-12 text-center my-6">
     <div class="w-12 h-12 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -303,9 +334,11 @@
       Clear all filters
     </button>
   </div>
+}
 
   <!-- QUICK VIEW SPECIFICATIONS MODAL -->
-  <div *ngIf="selectedCarForModal" 
+  @if (selectedCarForModal) {
+<div 
        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
     <div class="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
       
@@ -320,9 +353,11 @@
           ✕
         </button>
         <div class="absolute bottom-4 left-4">
-          <span *ngIf="selectedCarForModal.brand" class="px-3 py-1 rounded-md text-xs font-bold bg-white text-slate-900 shadow">
+          @if (selectedCarForModal.brand) {
+<span class="px-3 py-1 rounded-md text-xs font-bold bg-white text-slate-900 shadow">
             {{ selectedCarForModal.brand.name }}
           </span>
+}
         </div>
       </div>
 
@@ -348,10 +383,12 @@
             <span class="block text-xs text-slate-400 uppercase font-semibold">Release Date</span>
             <span class="font-medium text-slate-700">{{ selectedCarForModal.releaseDate | date:'fullDate' }}</span>
           </div>
-          <div class="col-span-2" *ngIf="selectedCarForModal.brand?.description">
+          @if (selectedCarForModal.brand?.description) {
+<div class="col-span-2">
             <span class="block text-xs text-slate-400 uppercase font-semibold">Brand Overview</span>
             <span class="text-xs text-slate-600">{{ selectedCarForModal.brand.description }}</span>
           </div>
+}
         </div>
 
         <!-- Modal Footer -->
@@ -370,9 +407,11 @@
 
     </div>
   </div>
+}
 
   <!-- DELETE CONFIRMATION DIALOG -->
-  <div *ngIf="carToDelete" 
+  @if (carToDelete) {
+<div 
        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
       <div class="w-12 h-12 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mb-4">
@@ -396,5 +435,6 @@
       </div>
     </div>
   </div>
+}
 
 </div>
